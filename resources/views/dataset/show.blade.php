@@ -166,9 +166,9 @@ data
 
 <th class="px-4 py-2 border font-semibold text-center w-16">No</th>
 
-@foreach($dataset->schema_json as $column)
+@foreach($dataset->kolom as $column)
 <th class="px-4 py-2 border font-semibold whitespace-nowrap">
-{{ ucwords(str_replace('_',' ',$column)) }}
+{{ $column }}
 </th>
 @endforeach
 

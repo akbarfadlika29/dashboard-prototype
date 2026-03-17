@@ -17,12 +17,14 @@ class Dataset extends Model
         'slug',
         'deskripsi',
         'schema_json',
+        'kolom',
         'tipe_grafik_default',
         'aktif'
     ];
 
     protected $casts = [
-        'schema_json' => 'array'
+        'schema_json' => 'array',
+        'kolom' => 'array',
     ];
 
     public function kategori()

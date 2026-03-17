@@ -29,6 +29,17 @@ class DatasetSeeder extends Seeder
                     'jumlah_rujuk',
                     'jumlah_isbat',
                 ],
+                'kolom' => [
+                    'Kecamatan',
+                    'Desa/Kelurahan',
+                    'Jumlah Nikah',
+                    'Kantor',
+                    'Luar Kantor',
+                    'Nikah Campuran (Laki-Laki)',
+                    'Nikah Campuran (Wanita)',
+                    'Jumlah Rujuk',
+                    'Jumlah Isbat',
+                ],
             ],
 
             [
@@ -65,6 +76,33 @@ class DatasetSeeder extends Seeder
                     'pendidikan_pengantin_wanita_s2',
                     'pendidikan_pengantin_wanita_s3',
                 ],
+                'kolom' => [
+                    'Kecamatan',
+                    'Desa/Kelurahan',
+                    'Jumlah Nikah',
+                    'Usia Pengantin (Laki-Laki) (< 19)',
+                    'Usia Pengantin (Laki-Laki) (19-21)',
+                    'Usia Pengantin (Laki-Laki) (> 21)',
+                    'Usia Pengantin (Wanita) (< 19)',
+                    'Usia Pengantin (Wanita) (19-21)',
+                    'Usia Pengantin (Wanita) (> 21)',
+                    'Pendidikan Pengantin (Laki-Laki) (SD)',
+                    'Pendidikan Pengantin (Laki-Laki) (SLTP)',
+                    'Pendidikan Pengantin (Laki-Laki) (SLTA)',
+                    'Pendidikan Pengantin (Laki-Laki) (D1-D2)',
+                    'Pendidikan Pengantin (Laki-Laki) (D3)',
+                    'Pendidikan Pengantin (Laki-Laki) (S1)',
+                    'Pendidikan Pengantin (Laki-Laki) (S2)',
+                    'Pendidikan Pengantin (Laki-Laki) (S3)',
+                    'Pendidikan Pengantin (Wanita) (SD)',
+                    'Pendidikan Pengantin (Wanita) (SLTP)',
+                    'Pendidikan Pengantin (Wanita) (SLTA)',
+                    'Pendidikan Pengantin (Wanita) (D1-D2)',
+                    'Pendidikan Pengantin (Wanita) (D3)',
+                    'Pendidikan Pengantin (Wanita) (S1)',
+                    'Pendidikan Pengantin (Wanita) (S2)',
+                    'Pendidikan Pengantin (Wanita) (S3)',
+                ],
             ],
 
         ];
@@ -76,6 +114,7 @@ class DatasetSeeder extends Seeder
                     'kategori_id' => 5, // Hardcode Pernikahan
                     'deskripsi' => $item['deskripsi'],
                     'schema_json' => $item['schema_json'],
+                    'kolom' => $item['kolom'],
                 ]
             );
         }
