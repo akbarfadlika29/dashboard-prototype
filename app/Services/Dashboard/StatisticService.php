@@ -2,38 +2,55 @@
 
 namespace App\Services\Dashboard;
 
+use App\Models\DatasetData;
+
 class StatisticService
 {
     public function getAll()
     {
         return [
             'top_kecamatan' => $this->topKecamatan(),
-            'tren_nikah' => $this->trenNikah(),
-            'agama' => $this->agama(),
+            'nikah_lokasi' => $this->nikahLokasi(),
         ];
     }
 
     private function topKecamatan()
     {
+        $datasetId = 1; // dataset perkawinan 2025
+
+        $data = DatasetData::where('dataset_id', $datasetId)
+            ->get()
+            ->groupBy(fn($item) => $item->data_json['kecamatan'] ?? 'Unknown')
+            ->map(function ($rows) {
+                return collect($rows)->sum(fn($r) => (int) ($r->data_json['jumlah_nikah'] ?? 0));
+            })
+            ->sortDesc()
+            ->take(5);
+
         return [
-            'labels' => ['Semanding', 'Palang', 'Soko', 'Tuban', 'Jenu'],
-            'values' => [782, 613, 575, 503, 485],
+            'labels' => $data->keys()->values(),
+            'values' => $data->values(),
         ];
     }
 
-    private function trenNikah()
+    private function nikahLokasi()
     {
-        return [
-            'labels' => ['2021', '2022', '2023', '2024', '2025'],
-            'values' => [7143, 7883, 7592, 8321, 8039],
-        ];
-    }
+        $datasetId = 1;
 
-    private function agama()
-    {
+        $data = DatasetData::where('dataset_id', $datasetId)
+            ->get();
+
+        $dalam = $data->sum(function ($row) {
+            return (int) ($row->data_json['kantor'] ?? 0);
+        });
+
+        $luar = $data->sum(function ($row) {
+            return (int) ($row->data_json['luar_kantor'] ?? 0);
+        });
+
         return [
-            'labels' => ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'],
-            'values' => [10843, 1987, 539, 124, 58, 42],
+            'labels' => ['Dalam Kantor', 'Luar Kantor'],
+            'values' => [$dalam, $luar],
         ];
     }
 }
