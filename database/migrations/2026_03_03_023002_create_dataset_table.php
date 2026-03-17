@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('slug', 200)->unique()->nullable();
             $table->text('deskripsi')->nullable();
             $table->json('schema_json');
+            $table->json('kolom');
             $table->string('tipe_grafik_default', 50)->nullable();
             $table->boolean('aktif')->default(true);
             $table->timestamps();

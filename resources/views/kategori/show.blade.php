@@ -115,7 +115,7 @@
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
 
             <h4 class="text-sm font-semibold mb-4">
-                Perbandingan Nikah Dalam Kantor & Luar Kantor
+                Perbandingan Nikah Dalam Kantor & Luar Kantor (2025)
             </h4>
 
             <div class="h-64">
