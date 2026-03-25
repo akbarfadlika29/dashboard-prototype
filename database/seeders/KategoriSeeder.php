@@ -15,7 +15,8 @@ class KategoriSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            'Pendidikan/Madrasah',
+            'Pendidikan Agama Islam',
+            'Madrasah',
             'Zakat',
             'Wakaf',
             'Masjid/Musholla',
