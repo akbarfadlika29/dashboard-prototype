@@ -23,7 +23,7 @@
 <header class="bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-md">
     <div class="max-w-6xl mx-auto px-6 py-6 flex items-center gap-4">
 
-        <img src="/images/logo-kemenag.png"
+        <img src="/public/images/logo-kemenag.png"
              alt="Logo"
              class="h-12 w-auto">
 
