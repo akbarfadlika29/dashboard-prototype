@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dataset_data', function (Blueprint $table) {
+        Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('dataset_id')->constrained('dataset')->cascadeOnDelete();
-            $table->year('tahun')->index();
-            $table->json('data_json');
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('action');
+            $table->string('target_type');
+            $table->unsignedBigInteger('target_id')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
-            $table->index(['dataset_id', 'tahun']);
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dataset_data');
+        Schema::dropIfExists('activity_logs');
     }
 };

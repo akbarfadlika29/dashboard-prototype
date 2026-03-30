@@ -3627,8 +3627,8 @@ class DatasetDataSeeder extends Seeder
         foreach($data as $item) {
             DatasetData::create([
                 'dataset_id' => 1,
-                'tahun' => 2025,
-                'data_json' => $item
+                'data_json' => $item,
+                'created_by' => 1,
             ]);
         }
 
@@ -7121,8 +7121,8 @@ class DatasetDataSeeder extends Seeder
         foreach($data2 as $item) {
             DatasetData::create([
                 'dataset_id' => 2,
-                'tahun' => 2025,
-                'data_json' => $item
+                'data_json' => $item,
+                'created_by' => 1,
             ]);
         }
     }

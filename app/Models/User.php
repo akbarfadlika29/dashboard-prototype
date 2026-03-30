@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Seksi;
 
 class User extends Authenticatable
 {
@@ -19,8 +20,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'nip',
         'email',
         'password',
+        'role'
     ];
 
     /**
@@ -44,5 +47,30 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function seksi()
+    {
+        return $this->belongsToMany(Seksi::class, 'user_seksi');
+    }
+
+    public function isSuperadmin()
+    {
+        return $this->role === 'superadmin';
+    }
+
+    public function isAdminUmum()
+    {
+        return $this->role === 'admin_umum';
+    }
+
+    public function isAdminSeksi()
+    {
+        return $this->role === 'admin_seksi';
+    }
+
+    public function isKepalaSeksi()
+    {
+        return $this->role === 'kepala_seksi';
     }
 }
