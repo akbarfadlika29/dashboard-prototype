@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Dataset;
+use App\Models\User;
 
 class DatasetData extends Model
 {
@@ -11,8 +12,8 @@ class DatasetData extends Model
 
     protected $fillable = [
         'dataset_id',
-        'tahun',
-        'data_json'
+        'data_json',
+        'created_by'
     ];
 
     protected $casts = [
@@ -22,5 +23,10 @@ class DatasetData extends Model
     public function dataset()
     {
         return $this->belongsTo(Dataset::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }
