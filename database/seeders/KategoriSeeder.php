@@ -22,7 +22,7 @@ class KategoriSeeder extends Seeder
             'Masjid/Musholla',
             'Pernikahan',
             'Penyuluhan Agama',
-            'Pondok Pesantren',
+            'Pendidikan Diniyah &Pondok Pesantren',
             'Umum',
             'Kepegawaian',
         ];
