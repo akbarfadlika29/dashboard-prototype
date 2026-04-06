@@ -30,6 +30,7 @@ class StatisticService
         return [
             'labels' => $data->keys()->values(),
             'values' => $data->values(),
+            'kategori_id' => 2,
         ];
     }
 
@@ -51,6 +52,7 @@ class StatisticService
         return [
             'labels' => ['Dalam Kantor', 'Luar Kantor'],
             'values' => [$dalam, $luar],
+            'kategori_id' => 2,
         ];
     }
 }

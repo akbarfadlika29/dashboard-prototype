@@ -12,9 +12,9 @@ class KategoriController extends Controller
 {
     public function index()
     {
-        $kategori = Kategori::latest()->get();
+        $kategori = Kategori::orderBy('nama','asc')->latest()->get();
 
-        return view('kategori.index', compact('kategori'));
+        return view('public.kategori.index', compact('kategori'));
     }
 
     public function show($id, StatisticService $statisticService)
@@ -25,7 +25,9 @@ class KategoriController extends Controller
 
         $statistics = $statisticService->getAll();
 
-        return view('kategori.show', compact(
+        // return response()->json($statistics, 200, [], JSON_PRETTY_PRINT);
+
+        return view('public.kategori.show', compact(
             'kategori',
             'dataset',
             'statistics'

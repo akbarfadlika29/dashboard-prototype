@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.public')
 
 @section('title', $dataset->nama)
 
@@ -50,23 +50,38 @@
 
 @section('content')
 
-<div class="flex items-center justify-between mb-8">
+<div class="flex flex-wrap items-start justify-between gap-4 mb-8">
+    <div>
+        <h2 class="text-2xl font-semibold">
+            {{ $dataset->nama }}
+        </h2>
+        <p class="text-sm text-gray-500 mt-1">
+            {{ $dataset->deskripsi }}
+        </p>
+    </div>
 
-<div>
-<h2 class="text-2xl font-semibold">
-{{ $dataset->nama }}
-</h2>
+    <div class="flex flex-wrap items-center gap-2">
+        <a href="{{ route('dataset.export.pdf', [$dataset->slug ?? $dataset->id] + request()->query()) }}"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white text-sm hover:bg-red-700 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-8m0 0l-3 3m3-3l3 3M4 20h16" />
+            </svg>
+            Export PDF
+        </a>
 
-<p class="text-sm text-gray-500 mt-1">
-{{ $dataset->deskripsi }}
-</p>
-</div>
+        <a href="{{ route('dataset.export.excel', [$dataset->slug ?? $dataset->id] + request()->query()) }}"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm hover:bg-emerald-700 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-8m0 0l-3 3m3-3l3 3M4 20h16" />
+            </svg>
+            Export Excel
+        </a>
 
-<a href="{{ route('kategori.show', $dataset->kategori_id) }}"
-class="text-sm px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition">
-← Kembali
-</a>
-
+        <a href="{{ route('kategori.show', $dataset->kategori_id) }}"
+           class="text-sm px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition">
+            ← Kembali
+        </a>
+    </div>
 </div>
 
 

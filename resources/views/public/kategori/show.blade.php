@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.public')
 
 @section('title', $kategori->nama . ' - Portal Data & Informasi')
 
@@ -92,6 +92,7 @@
     
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
+        @if($kategori->id === $statistics['top_kecamatan']['kategori_id'])
         {{-- ========================= --}}
         {{-- CHART 1 --}}
         {{-- ========================= --}}
@@ -106,9 +107,9 @@
             </div>
 
         </div>
+        @endif
 
-
-
+        @if($kategori->id === $statistics['nikah_lokasi']['kategori_id'])
         {{-- ========================= --}}
         {{-- CHART 2 --}}
         {{-- ========================= --}}
@@ -123,6 +124,7 @@
             </div>
 
         </div>
+        @endif
 
 
 

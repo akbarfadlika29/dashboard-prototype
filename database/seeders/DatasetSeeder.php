@@ -111,7 +111,7 @@ class DatasetSeeder extends Seeder
             Dataset::updateOrCreate(
                 ['nama' => $item['nama']],
                 [
-                    'kategori_id' => 6, // Hardcode Pernikahan
+                    'kategori_id' => 2,
                     'seksi_id' => 2,
                     'deskripsi' => $item['deskripsi'],
                     'schema_json' => $item['schema_json'],
