@@ -8,6 +8,7 @@ use App\Models\DatasetData;
 use App\Models\DatasetFilter;
 use App\Models\Seksi;
 use App\Models\User;
+use App\Models\DatasetApprovalLog;
 
 class Dataset extends Model
 {
@@ -82,5 +83,15 @@ class Dataset extends Model
     public function isRejected()
     {
         return $this->status === 'rejected';
+    }
+
+    public function approvalLogs()
+    {
+        return $this->hasMany(DatasetApprovalLog::class);
+    }
+
+    public function canEdit()
+    {
+        return in_array($this->status, ['draft', 'rejected']);
     }
 }

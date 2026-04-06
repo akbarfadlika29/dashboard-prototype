@@ -15,16 +15,12 @@ class KategoriSeeder extends Seeder
     public function run(): void
     {
         $data = [
+            'Tata Usaha',
+            'Bimbingan Masyarakat Islam',
             'Pendidikan Agama Islam',
-            'Madrasah',
-            'Zakat',
-            'Wakaf',
-            'Masjid/Musholla',
-            'Pernikahan',
-            'Penyuluhan Agama',
-            'Pendidikan Diniyah &Pondok Pesantren',
-            'Umum',
-            'Kepegawaian',
+            'Pendidikan Diniyah & Pondok Pesantren',
+            'Pendidikan Madrasah',
+            'Zakat & Wakaf',
         ];
 
         foreach ($data as $nama) {
