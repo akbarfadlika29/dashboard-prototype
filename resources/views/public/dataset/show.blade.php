@@ -183,7 +183,7 @@ data
 
 @foreach($dataset->kolom as $column)
 <th class="px-4 py-2 border font-semibold whitespace-nowrap">
-{{ $column }}
+{{ $column['name'] }}
 </th>
 @endforeach
 
@@ -202,7 +202,7 @@ data
 
 @foreach($dataset->schema_json as $column)
 <td class="px-4 py-2 border whitespace-nowrap">
-{{ $row->data_json[$column] ?? '-' }}
+{{ $row->data_json[$column['name']] ?? '-' }}
 </td>
 @endforeach
 
