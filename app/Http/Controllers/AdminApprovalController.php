@@ -12,8 +12,7 @@ class AdminApprovalController extends Controller
     {
         $user = auth()->user();
 
-        $query = Dataset::with(['seksi', 'creator'])
-            ->where('status', 'pending');
+        $query = Dataset::with(['seksi', 'creator']);
 
         if ($user->isKepalaSeksi()) {
             $query->whereIn('seksi_id', $user->seksi->pluck('id'));
@@ -22,6 +21,18 @@ class AdminApprovalController extends Controller
         $dataset = $query->latest()->get();
 
         return view('admin.approval.index', compact('dataset'));
+    }
+
+    public function show(Dataset $dataset)
+    {
+        $dataset->load([
+            'seksi',
+            'creator',
+            'data',
+            'filters',
+        ]);
+
+        return view('admin.approval.show', compact('dataset'));
     }
 
     public function approve(Request $request, Dataset $dataset)
@@ -60,6 +71,15 @@ class AdminApprovalController extends Controller
         ]);
 
         return back()->with('success', 'Dataset ditolak');
+    }
+
+    public function cancel(Request $request, Dataset $dataset)
+    {
+        $dataset->update([
+            'status' => 'draft',
+        ]);
+
+        return back()->with('seccess', 'Dataset berhasil dikembalikan ke draft.');
     }
 
     private function authorizeApproval(Dataset $dataset)

@@ -20,9 +20,9 @@ class StatisticService
 
         $data = DatasetData::where('dataset_id', $datasetId)
             ->get()
-            ->groupBy(fn($item) => $item->data_json['kecamatan'] ?? 'Unknown')
+            ->groupBy(fn($item) => $item->data_json['Kecamatan'] ?? 'Unknown')
             ->map(function ($rows) {
-                return collect($rows)->sum(fn($r) => (int) ($r->data_json['jumlah_nikah'] ?? 0));
+                return collect($rows)->sum(fn($r) => (int) ($r->data_json['Jumlah Nikah'] ?? 0));
             })
             ->sortDesc()
             ->take(5);
@@ -42,11 +42,11 @@ class StatisticService
             ->get();
 
         $dalam = $data->sum(function ($row) {
-            return (int) ($row->data_json['kantor'] ?? 0);
+            return (int) ($row->data_json['Kantor'] ?? 0);
         });
 
         $luar = $data->sum(function ($row) {
-            return (int) ($row->data_json['luar_kantor'] ?? 0);
+            return (int) ($row->data_json['Luar Kantor'] ?? 0);
         });
 
         return [
