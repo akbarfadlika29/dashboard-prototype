@@ -41,7 +41,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{dataset}', [AdminDatasetController::class, 'destroy'])->name('dataset.destroy');
 
         Route::post('/{dataset}/submit', [AdminDatasetController::class, 'submit'])->name('dataset.submit');
-        Route::post('/{dataset}/cancel', [AdminDatasetController::class, 'cancel'])->name('dataset.cancel');
+        
 
         Route::post('/{dataset}/data', [AdminDatasetController::class, 'storeData'])->name('dataset.data.store');
         Route::put('/data/{data}', [AdminDatasetController::class, 'updateData'])->name('dataset.data.update');
@@ -68,6 +68,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [AdminApprovalController::class, 'index'])->name('admin.approval.index');
         Route::post('/{dataset}/approve', [AdminApprovalController::class, 'approve'])->name('admin.approval.approve');
         Route::post('/{dataset}/reject', [AdminApprovalController::class, 'reject'])->name('admin.approval.reject');
+        Route::post('/{dataset}/cancel', [AdminApprovalController::class, 'cancel'])->name('admin.approval.cancel');
+        Route::get('/{dataset}', [AdminApprovalController::class, 'show'])->name('admin.approval.show');
     });
 
     Route::middleware(['role:superadmin'])->group(function () {
