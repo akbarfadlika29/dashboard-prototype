@@ -79,7 +79,7 @@ class AdminDatasetController extends Controller
         $this->authorizeDataset($dataset);
 
         // $dataset->load('approvalLogs.creator');
-        $data = $dataset->data()->latest()->get();
+        $data = $dataset->data()->latest()->paginate(10)->withQueryString();
 
         // return response()->json($data, 200, [], JSON_PRETTY_PRINT);
         return view('admin.dataset.show', compact('dataset', 'data'));
@@ -404,7 +404,7 @@ class AdminDatasetController extends Controller
 
     public function storeFilter(Request $request, Dataset $dataset)
     {
-        $this->ensureEditable($dataset);
+        // $this->ensureEditable($dataset);
 
         $request->validate([
             'kolom' => 'required',
@@ -432,7 +432,7 @@ class AdminDatasetController extends Controller
 
     public function destroyFilter(Dataset $dataset, DatasetFilter $filter)
     {
-        $this->ensureEditable($dataset);
+        // $this->ensureEditable($dataset);
 
         $filter->delete();
 
