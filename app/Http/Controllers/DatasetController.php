@@ -122,14 +122,28 @@ class DatasetController extends Controller
         $filename = $dataset->nama . '.csv';
 
         return new StreamedResponse(function () use ($dataset, $query) {
+
             $handle = fopen('php://output', 'w');
 
-            fputcsv($handle, $dataset->kolom);
+            // =====================
+            // HEADER
+            // =====================
+            $headers = array_map(function ($col) {
+                return $col['name'] ?? '';
+            }, $dataset->kolom);
 
+            fputcsv($handle, $headers);
+
+            // =====================
+            // DATA
+            // =====================
             foreach ($query->get() as $row) {
+
                 $line = [];
 
-                foreach ($dataset->schema_json as $key) {
+                foreach ($dataset->schema_json as $col) {
+                    $key = $col['name']; // 🔥 ambil name
+
                     $line[] = $row->data_json[$key] ?? '';
                 }
 
@@ -137,6 +151,7 @@ class DatasetController extends Controller
             }
 
             fclose($handle);
+
         }, 200, [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',

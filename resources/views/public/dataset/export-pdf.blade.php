@@ -48,7 +48,7 @@
                 <th>No</th>
 
                 @foreach($dataset->kolom as $column)
-                    <th>{{ $column }}</th>
+                    <th>{{ $column['name'] }}</th>
                 @endforeach
             </tr>
         </thead>
@@ -59,7 +59,7 @@
                     <td>{{ $index + 1 }}</td>
 
                     @foreach($dataset->schema_json as $key)
-                        <td>{{ $row->data_json[$key] ?? '-' }}</td>
+                        <td>{{ $row->data_json[$key['name']] ?? '-' }}</td>
                     @endforeach
                 </tr>
             @endforeach
