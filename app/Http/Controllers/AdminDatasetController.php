@@ -438,4 +438,31 @@ class AdminDatasetController extends Controller
 
         return back()->with('success', 'Filter berhasil dihapus');
     }
+
+    public function import()
+    {
+        $kategori = Kategori::all();
+        $seksi = Seksi::all();
+
+        return view('admin.dataset.import', compact('kategori', 'seksi'));
+    }
+
+    public function importPreview(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required',
+            'kategori_id' => 'required',
+            'seksi_id' => 'required',
+            'file' => 'required|mimes:csv,txt,xlsx'
+        ]);
+
+        $file = $request->file('file');
+
+        $data = array_map('str_getcsv', file($file));
+
+        return view('admin.dataset.import_preview', [
+            'data' => array_slice($data, 0, 10),
+            'request' => $request->all()
+        ]);
+    }
 }

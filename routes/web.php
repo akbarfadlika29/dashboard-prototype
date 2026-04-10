@@ -34,6 +34,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [AdminDatasetController::class, 'index'])->name('dataset.index');
         Route::get('/create', [AdminDatasetController::class, 'create'])->name('dataset.create');
         Route::post('/', [AdminDatasetController::class, 'store'])->name('dataset.store');
+        Route::get('/import', [AdminDatasetController::class, 'import'])->name('dataset.import');
+        Route::post('/import-preview', [AdminDatasetController::class, 'importPreview'])->name('dataset.import.preview');
 
         Route::get('/{dataset}', [AdminDatasetController::class, 'show'])->name('admin-dataset.show');
         Route::get('/{dataset}/edit', [AdminDatasetController::class, 'edit'])->name('dataset.edit');
@@ -42,12 +44,9 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/{dataset}/submit', [AdminDatasetController::class, 'submit'])->name('dataset.submit');
         
-
         Route::post('/{dataset}/data', [AdminDatasetController::class, 'storeData'])->name('dataset.data.store');
         Route::put('/data/{data}', [AdminDatasetController::class, 'updateData'])->name('dataset.data.update');
         Route::delete('/data/{data}', [AdminDatasetController::class, 'destroyData'])->name('dataset.data.delete');
-
-        Route::post('/{dataset}/import', [AdminDatasetController::class, 'import'])->name('dataset.import');
 
         Route::post('{dataset}/columns', [AdminDatasetController::class, 'storeColumn'])->name('columns.store');
         Route::put('{dataset}/columns/{index}', [AdminDatasetController::class, 'updateColumn'])->name('columns.update');
