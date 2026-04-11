@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('dataset_approval_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('dataset_id')->constrained('dataset')->cascadeOnDelete();
-            $table->enum('action', ['approve', 'reject', 'cancel']);
+            $table->enum('action', ['submit', 'approve', 'reject', 'cancel']);
             $table->text('catatan')->nullable();
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
             $table->timestamps();

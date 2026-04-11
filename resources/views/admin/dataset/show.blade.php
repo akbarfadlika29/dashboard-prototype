@@ -89,7 +89,6 @@
                 <thead class="bg-slate-50 text-slate-600 uppercase text-xs tracking-wide">
                     <tr>
                         <th class="px-6 py-3 text-left">Nama Kolom</th>
-                        <th class="px-6 py-3 text-left">Key</th>
                         @if($dataset->canEdit())
                         <th class="px-6 py-3 text-right">Aksi</th>
                         @endif
@@ -110,14 +109,6 @@
                                            @disabled(!$dataset->canEdit())
                                            name="label"
                                            value="{{ $dataset->kolom[$i]['name'] }}"
-                                           class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            </td>
-
-                            <td class="px-4 py-2.5 w-72">
-                                    <input type="text"
-                                           @disabled(!$dataset->canEdit())
-                                           name="key"
-                                           value="{{ $key['name'] }}"
                                            class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                             </td>
 
@@ -321,36 +312,6 @@
             @empty
                 <div class="rounded-xl border border-dashed border-slate-300 py-8 text-center text-sm text-slate-500">
                     Belum ada filter.
-                </div>
-            @endforelse
-        </div>
-    </div>
-
-
-    {{-- APPROVAL HISTORY --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="px-4 py-2.5 border-b border-slate-200">
-            <h2 class="text-lg font-semibold text-slate-800">History Approval</h2>
-        </div>
-
-        <div class="divide-y divide-slate-100">
-            @forelse($dataset->approvalLogs as $log)
-                <div class="px-4 py-2.5 flex items-start justify-between gap-4 hover:bg-slate-50 transition">
-                    <div>
-                        <div class="font-medium text-slate-800">
-                            {{ ucfirst($log->action) }} oleh {{ $log->user->nama }}
-                        </div>
-
-                        @if($log->catatan)
-                            <div class="text-sm text-slate-500 mt-1">
-                                {{ $log->catatan }}
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            @empty
-                <div class="px-6 py-8 text-center text-sm text-slate-500">
-                    Belum ada riwayat approval.
                 </div>
             @endforelse
         </div>

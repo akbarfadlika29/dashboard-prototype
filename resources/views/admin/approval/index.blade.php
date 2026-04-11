@@ -20,6 +20,13 @@
                 <p class="text-2xl font-bold text-gray-900">{{ $dataset->count() }}</p>
             </div>
 
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 min-w-[130px]">
+                <p class="text-xs uppercase tracking-wide text-slate-600">Draft</p>
+                <p class="text-2xl font-bold text-slate-700">
+                    {{ $dataset->where('status', 'draft')->count() }}
+                </p>
+            </div>
+
             <div class="bg-yellow-50 border border-yellow-200 rounded-2xl px-5 py-3 min-w-[130px]">
                 <p class="text-xs uppercase tracking-wide text-yellow-700">Pending</p>
                 <p class="text-2xl font-bold text-yellow-700">
