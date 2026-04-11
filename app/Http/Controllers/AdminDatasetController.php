@@ -149,7 +149,7 @@ class AdminDatasetController extends Controller
         $dataset->filters()->delete();
         $dataset->delete();
 
-        return redirect()->route('admin.dataset.index')
+        return redirect()->route('dataset.index')
             ->with('success', 'Dataset berhasil dihapus');
     }
 
@@ -283,7 +283,7 @@ class AdminDatasetController extends Controller
 
         $request->validate([
             'label' => 'required|string',
-            'key'   => 'required|string|alpha_dash',
+            // 'key'   => 'required|string|alpha_dash',
             // 'type'  => 'required|in:text,number,date',
         ]);
 
@@ -294,7 +294,7 @@ class AdminDatasetController extends Controller
             abort(404);
         }
 
-        $oldKey = $schema[$index];
+        $oldKey = $schema[$index]['name'];
 
         $oldType = $kolom[$index]['type'] ?? 'text';
 
@@ -305,7 +305,7 @@ class AdminDatasetController extends Controller
         ];
 
         $schema[$index] = [
-            'name' => $request->key,
+            'name' => $request->label,
             'type' => $oldType,
         ];
 
@@ -314,10 +314,10 @@ class AdminDatasetController extends Controller
             $json = $row->data_json ?? [];
 
             if (
-                $oldKey !== $request->key &&
+                $oldKey !== $request->label &&
                 array_key_exists($oldKey, $json)
             ) {
-                $json[$request->key] = $json[$oldKey];
+                $json[$request->label] = $json[$oldKey];
                 unset($json[$oldKey]);
             }
 
@@ -331,6 +331,16 @@ class AdminDatasetController extends Controller
         $dataset->status = 'draft';
         $dataset->save();
 
+        $newKey = $request->label;
+
+        if ($oldKey !== $newKey) {
+            DatasetFilter::where('dataset_id', $dataset->id)
+                ->where('kolom', $oldKey)
+                ->update([
+                    'kolom' => $newKey
+                ]);
+        }
+
         return back()->with('success', 'Kolom berhasil diubah');
     }
 
@@ -341,7 +351,7 @@ class AdminDatasetController extends Controller
         $kolom = $dataset->kolom;
         $schema = $dataset->schema_json;
 
-        $removedKey = $schema[$index];
+        $removedKey = $schema[$index]['name'];
 
         unset($kolom[$index], $schema[$index]);
 
@@ -350,6 +360,10 @@ class AdminDatasetController extends Controller
             unset($json[$removedKey]);
             $row->update(['data_json' => $json]);
         }
+
+        DatasetFilter::where('dataset_id', $dataset->id)
+            ->where('kolom', $removedKey)
+            ->delete();
 
         $dataset->update([
             'kolom' => array_values($kolom),

@@ -37,7 +37,39 @@ class UserSeksiSeeder extends Seeder
             [
                 'user_id' => 5,
                 'seksi_id' => 4,
-            ]
+            ],
+            [
+                'user_id' => 6,
+                'seksi_id' => 2,
+            ],
+            [
+                'user_id' => 7,
+                'seksi_id' => 4,
+            ],
+            [
+                'user_id' => 8,
+                'seksi_id' => 5,
+            ],
+            [
+                'user_id' => 8,
+                'seksi_id' => 6,
+            ],
+            [
+                'user_id' => 9,
+                'seksi_id' => 1,
+            ],
+            [
+                'user_id' => 10,
+                'seksi_id' => 2,
+            ],
+            [
+                'user_id' => 11,
+                'seksi_id' => 5,
+            ],
+            [
+                'user_id' => 12,
+                'seksi_id' => 6,
+            ],
         ]);
     }
 }

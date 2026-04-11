@@ -26,6 +26,10 @@ class AuthController extends Controller
         ])) {
             $request->session()->regenerate();
 
+            if (Auth::user()->role === 'kepala_seksi') {
+                return redirect()->route('admin.approval.index');
+            }
+
             return redirect()->route('dataset.index');
         }
 
@@ -41,6 +45,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect('/');
     }
 }
