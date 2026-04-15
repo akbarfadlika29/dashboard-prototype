@@ -87,6 +87,54 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('Mahesa85'),
                 'role' => 'admin_seksi',
             ],
+            [
+                'nip' => '197607042025211008',
+                'nama' => 'SUGIANTO',
+                'password' => Hash::make('Sugianto1504'),
+                'role' => 'admin_seksi',
+            ],
+            [
+                'nip' => '198301062025211012',
+                'nama' => 'ZAKKY ZAKARIA YAHYA',
+                'password' => Hash::make('Zakky1504'),
+                'role' => 'admin_seksi',
+            ],
+            [
+                'nip' => '197903222007101005',
+                'nama' => 'MOCHAMMAD ALI BAHARUDIN S.Pd.I',
+                'password' => Hash::make('AliBahar1504'),
+                'role' => 'admin_seksi',
+            ],
+            [
+                'nip' => '199501282020121011',
+                'nama' => 'MOHAMMAD ALVIN FAHMI S.E.',
+                'password' => Hash::make('AlvinF1504'),
+                'role' => 'admin_seksi',
+            ],
+            [
+                'nip' => '199205312023211020',
+                'nama' => 'ALIF AKBAR MUTTAQIN S.Kom.',
+                'password' => Hash::make('AlifAkbarM1504'),
+                'role' => 'superadmin',
+            ],
+            [
+                'nip' => '199404032025211047',
+                'nama' => 'MOH. YASIN YUSUF S.Pd',
+                'password' => Hash::make('MYasin1504'),
+                'role' => 'admin_seksi',
+            ],
+            [
+                'nip' => '198008042005011003',
+                'nama' => 'MOH ANSHORI S.Pd',
+                'password' => Hash::make('MohAnshori1504'),
+                'role' => 'admin_seksi',
+            ],
+            [
+                'nip' => '199103132020121011',
+                'nama' => 'WAHYU TRI MULYO S.ST',
+                'password' => Hash::make('WahyuTM1504'),
+                'role' => 'admin_seksi',
+            ],
         ];
 
         foreach ($users as $user) {
