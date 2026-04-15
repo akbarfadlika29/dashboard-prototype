@@ -43,7 +43,7 @@
             </h2>
 
             <div class="mt-2 inline-flex items-center rounded-full bg-green-700 px-3 py-1 text-xs capitalize">
-                {{ str_replace('_', ' ', auth()->user()->role) }}
+                {{ auth()->user()->seksi->pluck('nama')->join(', ') }}
             </div>
         </div>
 
