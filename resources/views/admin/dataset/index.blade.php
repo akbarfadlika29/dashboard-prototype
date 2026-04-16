@@ -42,8 +42,8 @@
 
             <button onclick="goToImport()"
                 class="w-full border p-4 rounded-xl hover:bg-gray-100 text-left">
-                <div class="font-semibold">📄 Import Excel</div>
-                <div class="text-sm text-gray-500">Upload file Excel</div>
+                <div class="font-semibold">📄 Import CSV</div>
+                <div class="text-sm text-gray-500">Upload file CSV</div>
             </button>
         </div>
 

@@ -16,11 +16,11 @@ class DatasetFilterSeeder extends Seeder
         $data = [
             [
                 'dataset_id' => 1,
-                'kolom' => 'kecamatan',
+                'kolom' => 'Kecamatan',
             ],
             [
                 'dataset_id' => 1,
-                'kolom' => 'desa',
+                'kolom' => 'Desa/Kelurahan',
             ]
         ];
 
@@ -31,11 +31,11 @@ class DatasetFilterSeeder extends Seeder
         $data2 = [
             [
                 'dataset_id' => 2,
-                'kolom' => 'kecamatan',
+                'kolom' => 'Kecamatan',
             ],
             [
                 'dataset_id' => 2,
-                'kolom' => 'desa',
+                'kolom' => 'Desa/Kelurahan',
             ]
         ];
 
