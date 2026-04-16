@@ -21,7 +21,7 @@ class KategoriController extends Controller
     {
         $kategori = Kategori::findOrFail($id);
 
-        $dataset = Dataset::where('kategori_id', $id)->get();
+        $dataset = Dataset::where('kategori_id', $id)->where('status', 'approved')->get();
 
         $statistics = $statisticService->getAll();
 
