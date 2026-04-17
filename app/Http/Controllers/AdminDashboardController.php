@@ -5,35 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Dataset;
+use App\Services\Dashboard\StatisticService;
+use App\Models\Kategori;
 
 class AdminDashboardController extends Controller
 {
-    public function index()
+    public function index(StatisticService $statisticService)
     {
-        $user = Auth::user();
+        $statistics = $statisticService->getAll();
+        $seksi_id = auth()->user()->seksi->pluck('id');
 
-        $query = Dataset::query();
+        // dd($seksi_id[0]);
+        // dd($statistics['top_kecamatan']['seksi_id']);
 
-        if (in_array($user->role, ['admin_seksi', 'kepala_seksi'])) {
-            $seksiIds = $user->seksi->pluck('id');
-            $query->whereIn('seksi_id', $seksiIds);
-        }
-
-        $total = (clone $query)->count();
-        $draft = (clone $query)->where('status', 'draft')->count();
-        $pending = (clone $query)->where('status', 'pending')->count();
-        $approved = (clone $query)->where('status', 'approved')->count();
-        $rejected = (clone $query)->where('status', 'rejected')->count();
-        $latest = (clone $query)->latest()->take(5)->get();
-
-        return view('admin.dashboard', compact(
-            'user',
-            'total',
-            'draft',
-            'pending',
-            'approved',
-            'rejected',
-            'latest'
-        ));
+        return view('admin.dashboard.index', compact('statistics', 'seksi_id'));
     }
 }

@@ -10,7 +10,7 @@ class AdminKategoriController extends Controller
 {
     public function index()
     {
-        $kategori = Kategori::latest()->get();
+        $kategori = Kategori::latest()->paginate(10);
         return view('admin.kategori.index', compact('kategori'));
     }
 
@@ -21,12 +21,53 @@ class AdminKategoriController extends Controller
 
     public function store(Request $request)
     {
-        Kategori::create([
-            'nama' => $request->nama,
-            'slug' => Str::slug($request->nama),
-            'deskripsi' => $request->deskripsi,
+        $request->validate([
+            'nama' => 'required|max:150',
+            'slug' => 'nullable|unique:kategori,slug',
+            'deskripsi' => 'nullable'
         ]);
 
-        return redirect()->route('admin.kategori.index');
+        Kategori::create([
+            'nama' => $request->nama,
+            'slug' => $request->slug ?: Str::slug($request->nama),
+            'deskripsi' => $request->deskripsi
+        ]);
+
+        return redirect()->route('admin.kategori.index')
+            ->with('success', 'Kategori berhasil ditambahkan');
+    }
+
+    public function edit(Kategori $kategori)
+    {
+        return view('admin.kategori.edit', compact('kategori'));
+    }
+
+    public function update(Request $request, Kategori $kategori)
+    {
+        $request->validate([
+            'nama' => 'required|max:150',
+            'slug' => 'nullable|unique:kategori,slug,' . $kategori->id,
+            'deskripsi' => 'nullable'
+        ]);
+
+        $kategori->update([
+            'nama' => $request->nama,
+            'slug' => $request->slug ?: Str::slug($request->nama),
+            'deskripsi' => $request->deskripsi
+        ]);
+
+        return redirect()->route('admin.kategori.index')
+            ->with('success', 'Kategori berhasil diupdate');
+    }
+
+    public function destroy(Kategori $kategori)
+    {
+        if ($kategori->dataset()->count() > 0) {
+            return back()->with('error', 'Kategori tidak bisa dihapus karena masih digunakan dataset');
+        }
+
+        $kategori->delete();
+
+        return back()->with('success', 'Kategori berhasil dihapus');
     }
 }
