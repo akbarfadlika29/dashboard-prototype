@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminApprovalController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminSeksiController;
 use App\Http\Controllers\AdminKategoriController;
+use App\Http\Controllers\AdminDashboardController;
 
 Route::get('/', [KategoriController::class, 'index'])->name('kategori.index');
 Route::get('/kategori/{id}', [KategoriController::class, 'show'])->name('kategori.show');
@@ -24,7 +25,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/admin-dashboard', [DashboardController::class, 'admin'])
+    Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])
         ->name('admin.dashboard');
 
     Route::middleware(['role:superadmin,admin_umum,admin_seksi'])

@@ -31,6 +31,7 @@ class StatisticService
             'labels' => $data->keys()->values(),
             'values' => $data->values(),
             'kategori_id' => 2,
+            'seksi_id' => 2,
         ];
     }
 
@@ -53,6 +54,7 @@ class StatisticService
             'labels' => ['Dalam Kantor', 'Luar Kantor'],
             'values' => [$dalam, $luar],
             'kategori_id' => 2,
+            'seksi_id' => 2,
         ];
     }
 }
