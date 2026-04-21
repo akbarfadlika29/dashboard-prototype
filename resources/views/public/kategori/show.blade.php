@@ -45,21 +45,6 @@
     </div>
 </section>
 
-{{-- MINI STATS --}}
-<section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-
-    <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
-        <p class="text-xs text-gray-500 dark:text-slate-400">Dataset</p>
-        <h3 class="text-xl font-bold mt-1">{{ $dataset->count() }}</h3>
-    </div>
-
-    <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
-        <p class="text-xs text-gray-500 dark:text-slate-400">Status</p>
-        <h3 class="text-xl font-bold mt-1 text-emerald-600">Online</h3>
-    </div>
-
-</section>
-
 {{-- TAB NAV --}}
 <div class="mb-8">
     <div class="inline-flex bg-gray-100 dark:bg-slate-800 p-1 rounded-2xl gap-1">
