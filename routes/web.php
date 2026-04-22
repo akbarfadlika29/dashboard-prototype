@@ -22,6 +22,8 @@ Route::get('/dataset/{dataset}/export/pdf', [DatasetController::class, 'exportPd
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/otp', [AuthController::class, 'showOtp'])->name('otp.form');
+Route::post('/otp', [AuthController::class, 'verifyOtp'])->name('otp.verify');
 
 Route::middleware('auth')->group(function () {
 
