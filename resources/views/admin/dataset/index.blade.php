@@ -5,122 +5,326 @@
 
 @section('content')
 
-<div class="flex items-center justify-between mb-6">
+@php
+    function datasetStatusBadge($dataset) {
+
+        if ($dataset->activeRevision && $dataset->activeRevision->status === 'pending') {
+            return [
+                'label' => 'Pending Revision',
+                'class' => 'bg-amber-100 text-amber-700'
+            ];
+        }
+
+        if ($dataset->status === 'approved') {
+            return [
+                'label' => 'Aprroved',
+                'class' => 'bg-green-100 text-green-700'
+            ];
+        }
+
+        if ($dataset->status === 'pending') {
+            return [
+                'label' => 'Waiting for Approval',
+                'class' => 'bg-blue-100 text-blue-700'
+            ];
+        }
+
+        if ($dataset->status === 'rejected') {
+            return [
+                'label' => 'Rejected',
+                'class' => 'bg-red-100 text-red-700'
+            ];
+        }
+
+        return [
+            'label' => 'Draft',
+            'class' => 'bg-slate-100 text-slate-700'
+        ];
+    }
+@endphp
+
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+
     <div>
-        <h3 class="text-lg font-semibold text-gray-800">
+        <h1 class="text-2xl font-bold text-slate-800">
             Daftar Dataset
-        </h3>
-        <p class="text-sm text-gray-500 mt-1">
+        </h1>
+
+        <p class="text-sm text-slate-500 mt-1">
             Total {{ $dataset->count() }} dataset
         </p>
     </div>
 
-    <!-- BUTTON -->
     <button onclick="openModal()"
-        class="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white px-5 py-3 rounded-xl font-medium transition">
+        class="inline-flex items-center justify-center gap-2 rounded-2xl bg-green-700 hover:bg-green-800 text-white px-5 py-3 font-medium transition shadow-sm">
+
         <i class="fa-solid fa-plus"></i>
+
         Tambah Dataset
     </button>
 </div>
 
-<!-- MODAL -->
-<div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-    <div class="bg-white w-[420px] rounded-2xl shadow-lg p-6">
+{{-- SUMMARY --}}
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
 
-        <h2 class="text-lg font-bold mb-4">Tambah Dataset</h2>
+    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+        <div class="text-sm text-slate-500">
+            Total
+        </div>
 
-        <p class="text-sm text-gray-500 mb-4">
-            Pilih metode input data
+        <div class="mt-2 text-3xl font-bold text-slate-800">
+            {{ $dataset->count() }}
+        </div>
+    </div>
+
+    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+        <div class="text-sm text-slate-500">
+            Draft
+        </div>
+
+        <div class="mt-2 text-3xl font-bold text-slate-700">
+            {{ $dataset->where('status', 'draft')->count() }}
+        </div>
+    </div>
+
+    <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-5">
+        <div class="text-sm text-yellow-600">
+            Waiting for Approval
+        </div>
+
+        <div class="mt-2 text-3xl font-bold text-yellow-700">
+            {{ $dataset->where('status', 'pending')->count() }}
+        </div>
+    </div>
+
+    <div class="bg-green-50 border border-green-200 rounded-2xl p-5">
+        <div class="text-sm text-green-600">
+            Approved
+        </div>
+
+        <div class="mt-2 text-3xl font-bold text-green-700">
+            {{ $dataset->where('status', 'approved')->count() }}
+        </div>
+    </div>
+
+    <div class="bg-red-50 border border-red-200 rounded-2xl p-5">
+        <div class="text-sm text-red-600">
+            Rejected
+        </div>
+
+        <div class="mt-2 text-3xl font-bold text-red-700">
+            {{ $dataset->where('status', 'rejected')->count() }}
+        </div>
+    </div>
+
+</div>
+
+{{-- MODAL --}}
+<div id="modal"
+     class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+
+    <div class="bg-white w-[420px] rounded-3xl shadow-xl p-6">
+
+        <h2 class="text-xl font-bold text-slate-800 mb-2">
+            Tambah Dataset
+        </h2>
+
+        <p class="text-sm text-slate-500 mb-6">
+            Pilih metode input dataset
         </p>
 
         <div class="space-y-3">
+
             <button onclick="goToManual()"
-                class="w-full border p-4 rounded-xl hover:bg-gray-100 text-left">
-                <div class="font-semibold">✍️ Input Manual</div>
-                <div class="text-sm text-gray-500">Isi data satu per satu</div>
+                class="w-full border border-slate-200 rounded-2xl p-5 hover:bg-slate-50 transition text-left">
+
+                <div class="font-semibold text-slate-800">
+                    ✍️ Input Manual
+                </div>
+
+                <div class="text-sm text-slate-500 mt-1">
+                    Isi dataset secara manual
+                </div>
             </button>
 
             <button onclick="goToImport()"
-                class="w-full border p-4 rounded-xl hover:bg-gray-100 text-left">
-                <div class="font-semibold">📄 Import CSV</div>
-                <div class="text-sm text-gray-500">Upload file CSV</div>
+                class="w-full border border-slate-200 rounded-2xl p-5 hover:bg-slate-50 transition text-left">
+
+                <div class="font-semibold text-slate-800">
+                    📄 Import CSV
+                </div>
+
+                <div class="text-sm text-slate-500 mt-1">
+                    Upload file CSV
+                </div>
             </button>
+
         </div>
 
         <button onclick="closeModal()"
-            class="mt-4 text-sm text-gray-500 hover:underline">
+            class="mt-5 text-sm text-slate-500 hover:text-slate-700 transition">
             Batal
         </button>
 
     </div>
 </div>
 
-{{-- TABLE (tidak berubah) --}}
-<div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+{{-- TABLE --}}
+<div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+
     <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
-            <thead class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wide">
+
+        <table class="min-w-full">
+
+            <thead class="bg-slate-50 border-b border-slate-200">
+
                 <tr>
-                    <th class="px-6 py-4 text-left">Nama Dataset</th>
-                    <th class="px-6 py-4 text-left">Kategori</th>
-                    <th class="px-6 py-4 text-left">Seksi</th>
-                    <th class="px-6 py-4 text-center">Status</th>
-                    <th class="px-6 py-4 text-center w-32">Aksi</th>
+
+                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        Dataset
+                    </th>
+
+                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        Kategori
+                    </th>
+
+                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        Seksi
+                    </th>
+
+                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        Status
+                    </th>
+
+                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        Revision
+                    </th>
+
+                    <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        Aksi
+                    </th>
+
                 </tr>
+
             </thead>
-            <tbody class="divide-y divide-gray-100">
+
+            <tbody class="divide-y divide-slate-100 bg-white">
+
                 @forelse($dataset as $item)
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 font-medium text-gray-800">
-                            {{ $item->nama }}
+
+                    @php
+                        $badge = datasetStatusBadge($item);
+                    @endphp
+
+                    <tr class="hover:bg-slate-50 transition">
+
+                        {{-- DATASET --}}
+                        <td class="px-6 py-5">
+
+                            <div class="font-semibold text-slate-800">
+                                {{ $item->nama }}
+                            </div>
+
+                            @if($item->deskripsi)
+                                <div class="text-sm text-slate-500 mt-1 line-clamp-2">
+                                    {{ $item->deskripsi }}
+                                </div>
+                            @endif
+
                         </td>
 
-                        <td class="px-6 py-4 text-gray-600">
-                            {{ $item->kategori->nama }}
+                        {{-- KATEGORI --}}
+                        <td class="px-6 py-5 text-sm text-slate-600 whitespace-nowrap">
+                            {{ $item->kategori->nama ?? '-' }}
                         </td>
 
-                        <td class="px-6 py-4 text-gray-600">
-                            {{ $item->seksi->nama }}
+                        {{-- SEKSI --}}
+                        <td class="px-6 py-5 text-sm text-slate-600 whitespace-nowrap">
+                            {{ $item->seksi->nama ?? '-' }}
                         </td>
 
-                        <td class="px-6 py-4 text-center">
-                            @php
-                                $badge = match($item->status) {
-                                    'draft' => 'bg-gray-100 text-gray-700',
-                                    'pending' => 'bg-yellow-100 text-yellow-700',
-                                    'approved' => 'bg-green-100 text-green-700',
-                                    'rejected' => 'bg-red-100 text-red-700',
-                                };
-                            @endphp
+                        {{-- STATUS --}}
+                        <td class="px-6 py-5 whitespace-nowrap">
 
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold capitalize {{ $badge }}">
-                                {{ $item->status }}
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $badge['class'] }}">
+                                {{ $badge['label'] }}
                             </span>
+
                         </td>
 
-                        <td class="px-6 py-4 text-center">
-                            <a href="{{ route('admin-dataset.show', $item->id) }}"
-                               class="inline-flex items-center gap-2 text-green-700 hover:text-green-900 font-medium">
-                                <i class="fa-solid fa-eye"></i>
-                                Detail
-                            </a>
+                        {{-- REVISION --}}
+                        <td class="px-6 py-5 whitespace-nowrap">
+
+                            @if($item->activeRevision)
+
+                                @php
+                                    $revisionClass = match($item->activeRevision->status) {
+                                        'draft' => 'bg-slate-100 text-slate-700',
+                                        'pending' => 'bg-amber-100 text-amber-700',
+                                        'rejected' => 'bg-red-100 text-red-700',
+                                        default => 'bg-slate-100 text-slate-700'
+                                    };
+                                @endphp
+
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $revisionClass }}">
+                                    {{ ucfirst($item->activeRevision->status) }}
+                                </span>
+
+                            @else
+
+                                <span class="text-sm text-slate-400">
+                                    Tidak ada
+                                </span>
+
+                            @endif
+
+                        </td>
+
+                        {{-- AKSI --}}
+                        <td class="px-6 py-5">
+
+                            <div class="flex items-center justify-center">
+
+                                <a href="{{ route('admin-dataset.show', $item) }}"
+                                   class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition">
+
+                                    <i class="fa-solid fa-eye"></i>
+
+                                    Detail
+
+                                </a>
+
+                            </div>
+
                         </td>
 
                     </tr>
+
                 @empty
+
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+
+                        <td colspan="6"
+                            class="px-6 py-14 text-center text-slate-500">
+
                             Belum ada dataset.
+
                         </td>
+
                     </tr>
+
                 @endforelse
+
             </tbody>
+
         </table>
+
     </div>
+
 </div>
 
-{{-- SCRIPT --}}
 <script>
+
 function openModal() {
     document.getElementById('modal').classList.remove('hidden');
     document.getElementById('modal').classList.add('flex');
@@ -138,6 +342,7 @@ function goToManual() {
 function goToImport() {
     window.location.href = "{{ route('dataset.import') }}";
 }
+
 </script>
 
 @endsection

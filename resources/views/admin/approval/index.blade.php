@@ -1,244 +1,334 @@
 @extends('layouts.admin')
 
 @section('title', 'Approval Dataset')
+@section('subtitle', 'Kelola approval dataset dan revisi dataset')
 
 @section('content')
+
 <div class="space-y-6">
 
-    {{-- Header --}}
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    {{-- HEADER --}}
+    <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+
         <div>
-            <h1 class="text-3xl font-bold text-gray-900">Approval Dataset</h1>
-            <p class="text-gray-500 mt-1">
-                Kelola seluruh dataset, lakukan approve, reject, atau kembalikan ke draft.
+            <h1 class="text-2xl font-bold text-slate-800">
+                Approval Dataset
+            </h1>
+
+            <p class="text-sm text-slate-500 mt-1">
+                Monitoring approval dataset dan revisi dataset
             </p>
         </div>
 
-        <div class="flex gap-3 flex-wrap">
-            <div class="bg-white border rounded-2xl px-5 py-3 shadow-sm min-w-[130px]">
-                <p class="text-xs uppercase tracking-wide text-gray-500">Total</p>
-                <p class="text-2xl font-bold text-gray-900">{{ $dataset->count() }}</p>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+
+            <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-sm">
+                <div class="text-xs text-slate-500 uppercase tracking-wide">
+                    Total
+                </div>
+
+                <div class="mt-2 text-2xl font-bold text-slate-800">
+                    {{ $dataset->count() }}
+                </div>
             </div>
 
-            <div class="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 min-w-[130px]">
-                <p class="text-xs uppercase tracking-wide text-slate-600">Draft</p>
-                <p class="text-2xl font-bold text-slate-700">
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4">
+                <div class="text-xs text-slate-500 uppercase tracking-wide">
+                    Draft
+                </div>
+
+                <div class="mt-2 text-2xl font-bold text-slate-700">
                     {{ $dataset->where('status', 'draft')->count() }}
-                </p>
+                </div>
             </div>
 
-            <div class="bg-yellow-50 border border-yellow-200 rounded-2xl px-5 py-3 min-w-[130px]">
-                <p class="text-xs uppercase tracking-wide text-yellow-700">Pending</p>
-                <p class="text-2xl font-bold text-yellow-700">
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4">
+                <div class="text-xs text-amber-700 uppercase tracking-wide">
+                    Pending
+                </div>
+
+                <div class="mt-2 text-2xl font-bold text-amber-700">
                     {{ $dataset->where('status', 'pending')->count() }}
-                </p>
+                </div>
             </div>
 
-            <div class="bg-green-50 border border-green-200 rounded-2xl px-5 py-3 min-w-[130px]">
-                <p class="text-xs uppercase tracking-wide text-green-700">Approved</p>
-                <p class="text-2xl font-bold text-green-700">
+            <div class="bg-green-50 border border-green-200 rounded-2xl px-5 py-4">
+                <div class="text-xs text-green-700 uppercase tracking-wide">
+                    Approved
+                </div>
+
+                <div class="mt-2 text-2xl font-bold text-green-700">
                     {{ $dataset->where('status', 'approved')->count() }}
-                </p>
+                </div>
             </div>
 
-            <div class="bg-red-50 border border-red-200 rounded-2xl px-5 py-3 min-w-[130px]">
-                <p class="text-xs uppercase tracking-wide text-red-700">Rejected</p>
-                <p class="text-2xl font-bold text-red-700">
+            <div class="bg-red-50 border border-red-200 rounded-2xl px-5 py-4">
+                <div class="text-xs text-red-700 uppercase tracking-wide">
+                    Rejected
+                </div>
+
+                <div class="mt-2 text-2xl font-bold text-red-700">
                     {{ $dataset->where('status', 'rejected')->count() }}
-                </p>
+                </div>
             </div>
+
         </div>
     </div>
 
-    {{-- Table Card --}}
-    <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
 
-        <div class="px-6 py-5 border-b border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+    {{-- TABLE --}}
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+
+        <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between">
             <div>
-                <h2 class="text-lg font-semibold text-gray-900">Daftar Dataset</h2>
-                <p class="text-sm text-gray-500">Semua dataset ditampilkan beserta status dan aksi yang tersedia.</p>
+                <h2 class="text-lg font-semibold text-slate-800">
+                    Daftar Dataset
+                </h2>
+
+                <p class="text-sm text-slate-500 mt-1">
+                    Semua dataset yang dapat dilakukan approval
+                </p>
             </div>
 
-            <div class="text-sm text-gray-500">
-                {{ $dataset->count() }} dataset ditemukan
+            <div class="text-sm text-slate-500">
+                {{ $dataset->count() }} dataset
             </div>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-100">
-                <thead class="bg-gray-50">
+
+            <table class="min-w-full text-sm">
+
+                <thead class="bg-slate-50 text-slate-600 uppercase text-xs tracking-wide">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Dataset</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Seksi</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Pembuat</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Status</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Tanggal</th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">Aksi</th>
+                        <th class="px-6 py-4 text-left">
+                            Dataset
+                        </th>
+
+                        <th class="px-6 py-4 text-left">
+                            Kategori
+                        </th>
+
+                        <th class="px-6 py-4 text-left">
+                            Seksi
+                        </th>
+
+                        <th class="px-6 py-4 text-left">
+                            Pembuat
+                        </th>
+
+                        <th class="px-6 py-4 text-center">
+                            Status
+                        </th>
+
+                        <th class="px-6 py-4 text-center">
+                            Revisi
+                        </th>
+
+                        <th class="px-6 py-4 text-center">
+                            Aksi
+                        </th>
                     </tr>
                 </thead>
 
-                <tbody class="divide-y divide-gray-100 bg-white">
+                <tbody class="divide-y divide-slate-100">
+
                     @forelse($dataset as $item)
-                        <tr class="hover:bg-gray-50 transition duration-150 align-top">
 
-                            {{-- Dataset --}}
+                        @php
+                            $statusColor = match($item->status) {
+                                'draft' => 'bg-slate-100 text-slate-700',
+                                'pending' => 'bg-amber-100 text-amber-700',
+                                'approved' => 'bg-green-100 text-green-700',
+                                'rejected' => 'bg-red-100 text-red-700',
+                                default => 'bg-slate-100 text-slate-700',
+                            };
+
+                            $revisionStatusColor = match(optional($item->activeRevision)->status) {
+                                'pending' => 'bg-amber-100 text-amber-700',
+                                'approved' => 'bg-green-100 text-green-700',
+                                'rejected' => 'bg-red-100 text-red-700',
+                                'draft' => 'bg-slate-100 text-slate-700',
+                                default => 'bg-slate-100 text-slate-500',
+                            };
+                        @endphp
+
+                        <tr class="hover:bg-slate-50 transition align-top">
+
+                            {{-- DATASET --}}
                             <td class="px-6 py-5">
-                                <div>
-                                    <div class="font-semibold text-gray-900 text-sm md:text-base">
-                                        {{ $item->nama }}
-                                    </div>
 
-                                    @if($item->deskripsi)
-                                        <p class="text-sm text-gray-500 mt-1 line-clamp-2 max-w-md">
-                                            {{ $item->deskripsi }}
-                                        </p>
-                                    @endif
+                                <div class="font-semibold text-slate-800">
+                                    {{ $item->nama }}
                                 </div>
+
+                                @if($item->deskripsi)
+                                    <div class="text-sm text-slate-500 mt-1 max-w-md line-clamp-2">
+                                        {{ $item->deskripsi }}
+                                    </div>
+                                @endif
+
                             </td>
 
-                            {{-- Seksi --}}
-                            <td class="px-6 py-5 text-sm text-gray-700 whitespace-nowrap">
+                            {{-- KATEGORI --}}
+                            <td class="px-6 py-5 whitespace-nowrap text-slate-600">
+                                {{ $item->kategori->nama ?? '-' }}
+                            </td>
+
+                            {{-- SEKSI --}}
+                            <td class="px-6 py-5 whitespace-nowrap text-slate-600">
                                 {{ $item->seksi->nama ?? '-' }}
                             </td>
 
-                            {{-- Creator --}}
-                            <td class="px-6 py-5 text-sm text-gray-700 whitespace-nowrap">
+                            {{-- CREATOR --}}
+                            <td class="px-6 py-5 whitespace-nowrap text-slate-600">
                                 {{ $item->creator->nama ?? '-' }}
                             </td>
 
-                            {{-- Status --}}
-                            <td class="px-6 py-5 whitespace-nowrap">
-                                @php
-                                    $statusClass = match($item->status) {
-                                        'approved' => 'bg-green-100 text-green-700 border-green-200',
-                                        'pending' => 'bg-yellow-100 text-yellow-700 border-yellow-200',
-                                        'rejected' => 'bg-red-100 text-red-700 border-red-200',
-                                        'draft' => 'bg-gray-100 text-gray-700 border-gray-200',
-                                        default => 'bg-blue-100 text-blue-700 border-blue-200',
-                                    };
-                                @endphp
+                            {{-- STATUS --}}
+                            <td class="px-6 py-5 text-center whitespace-nowrap">
 
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border {{ $statusClass }} capitalize">
-                                    {{ $item->status }}
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold capitalize {{ $statusColor }}">
+                                    {{ str_replace('_', ' ', $item->status) }}
                                 </span>
+
                             </td>
 
-                            {{-- Date --}}
-                            <td class="px-6 py-5 text-sm text-gray-500 whitespace-nowrap">
-                                <div>{{ $item->created_at->format('d M Y') }}</div>
-                                <div class="text-xs text-gray-400">{{ $item->created_at->format('H:i') }}</div>
+                            {{-- REVISION --}}
+                            <td class="px-6 py-5 text-center whitespace-nowrap">
+
+                                @if($item->activeRevision)
+
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold capitalize {{ $revisionStatusColor }}">
+                                        {{ str_replace('_', ' ', $item->activeRevision->status) }}
+                                    </span>
+
+                                @else
+
+                                    <span class="text-xs text-slate-400">
+                                        Tidak ada
+                                    </span>
+
+                                @endif
+
                             </td>
 
-                            {{-- Actions --}}
+                            {{-- ACTION --}}
                             <td class="px-6 py-5">
+
                                 <div class="flex flex-col gap-2 min-w-[220px]">
 
-                                    {{-- Detail button --}}
+                                    {{-- DETAIL --}}
                                     <a href="{{ route('admin.approval.show', $item) }}"
-                                       class="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:border-gray-300 transition">
+                                       class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition">
 
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
+                                        <i class="fa-solid fa-eye"></i>
 
-                                        Lihat Detail
+                                        Detail
                                     </a>
 
-                                    {{-- Pending: approve + reject --}}
+                                    {{-- APPROVE DATASET --}}
                                     @if($item->status === 'pending')
-                                        <div class="grid grid-cols-1 gap-2">
 
-                                            <form method="POST" action="{{ route('admin.approval.approve', $item) }}" class="space-y-2">
-                                                @csrf
-
-                                                <input
-                                                    type="text"
-                                                    name="catatan"
-                                                    placeholder="Catatan approve (opsional)"
-                                                    class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:border-green-500 focus:ring focus:ring-green-100"
-                                                >
-
-                                                <button
-                                                    type="submit"
-                                                    class="w-full rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-700 transition shadow-sm"
-                                                >
-                                                    Approve Dataset
-                                                </button>
-                                            </form>
-
-                                            <form method="POST" action="{{ route('admin.approval.reject', $item) }}" class="space-y-2">
-                                                @csrf
-
-                                                <input
-                                                    type="text"
-                                                    name="catatan"
-                                                    placeholder="Alasan reject"
-                                                    class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:border-red-500 focus:ring focus:ring-red-100"
-                                                    required
-                                                >
-
-                                                <button
-                                                    type="submit"
-                                                    class="w-full rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition shadow-sm"
-                                                >
-                                                    Reject Dataset
-                                                </button>
-                                            </form>
-                                        </div>
-                                    @endif
-
-                                    {{-- Approved: cancel / return to draft --}}
-                                    @if($item->status === 'approved')
-                                        <form method="POST" action="{{ route('admin.approval.cancel', $item) }}" class="space-y-2">
+                                        <form method="POST"
+                                              action="{{ route('admin.approval.approve', $item) }}">
                                             @csrf
 
-                                            <input
-                                                type="text"
-                                                name="catatan"
-                                                placeholder="Alasan kembalikan ke draft"
-                                                class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:border-amber-500 focus:ring focus:ring-amber-100"
-                                                required
-                                            >
+                                            <button class="w-full rounded-xl bg-green-600 hover:bg-green-700 px-4 py-2 text-sm font-medium text-white transition">
+                                                Approve Dataset
+                                            </button>
+                                        </form>
 
-                                            <button
-                                                type="submit"
-                                                class="w-full rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-amber-600 transition shadow-sm"
-                                            >
+                                        <form method="POST"
+                                              action="{{ route('admin.approval.reject', $item) }}">
+                                            @csrf
+
+                                            <button class="w-full rounded-xl bg-red-600 hover:bg-red-700 px-4 py-2 text-sm font-medium text-white transition">
+                                                Reject Dataset
+                                            </button>
+                                        </form>
+
+                                    @endif
+
+
+                                    {{-- APPROVE REVISION --}}
+                                    @if($item->activeRevision && $item->activeRevision->status === 'pending')
+
+                                        <form method="POST"
+                                              action="{{ route('admin.approval.approveUpdate', $item) }}">
+                                            @csrf
+
+                                            <button class="w-full rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white transition">
+                                                Approve Revisi
+                                            </button>
+                                        </form>
+
+                                        <form method="POST"
+                                              action="{{ route('admin.approval.rejectUpdate', $item) }}">
+                                            @csrf
+
+                                            <button class="w-full rounded-xl bg-orange-600 hover:bg-orange-700 px-4 py-2 text-sm font-medium text-white transition">
+                                                Reject Revisi
+                                            </button>
+                                        </form>
+
+                                    @endif
+
+
+                                    {{-- CANCEL --}}
+                                    @if($item->status === 'approved')
+
+                                        <form method="POST"
+                                              action="{{ route('admin.approval.cancel', $item) }}">
+                                            @csrf
+
+                                            <button class="w-full rounded-xl bg-slate-700 hover:bg-slate-800 px-4 py-2 text-sm font-medium text-white transition">
                                                 Kembalikan ke Draft
                                             </button>
                                         </form>
+
                                     @endif
 
-                                    {{-- Draft / Rejected --}}
-                                    @if(in_array($item->status, ['draft', 'rejected']))
-                                        <div class="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-3 text-center text-xs text-gray-500">
-                                            Tidak ada aksi yang tersedia untuk status ini.
+
+                                    {{-- NO ACTION --}}
+                                    @if(
+                                        $item->status === 'draft' ||
+                                        $item->status === 'rejected'
+                                    )
+
+                                        <div class="text-xs text-slate-400 text-center py-2">
+                                            Tidak ada aksi
                                         </div>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="px-6 py-14 text-center">
-                                <div class="flex flex-col items-center justify-center text-gray-500">
-                                    <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 014-4h4" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8L10 18" />
-                                        </svg>
-                                    </div>
 
-                                    <p class="font-semibold text-gray-700">Belum ada dataset</p>
-                                    <p class="text-sm text-gray-500 mt-1">Dataset yang memerlukan approval akan muncul di sini.</p>
+                                    @endif
+
                                 </div>
+
+                            </td>
+
+                        </tr>
+
+                    @empty
+
+                        <tr>
+                            <td colspan="7"
+                                class="px-6 py-14 text-center text-slate-500">
+
+                                Belum ada dataset
+
                             </td>
                         </tr>
+
                     @endforelse
+
                 </tbody>
+
             </table>
+
         </div>
+
     </div>
+
 </div>
+
 @endsection
