@@ -34,45 +34,169 @@ Route::middleware('auth')->group(function () {
         ->prefix('admin-dataset')
         ->group(function () {
 
-        Route::get('/', [AdminDatasetController::class, 'index'])->name('dataset.index');
-        Route::get('/create', [AdminDatasetController::class, 'create'])->name('dataset.create');
-        Route::post('/', [AdminDatasetController::class, 'store'])->name('dataset.store');
-        Route::get('/import', [AdminDatasetController::class, 'import'])->name('dataset.import');
-        Route::post('/import-preview', [AdminDatasetController::class, 'importPreview'])->name('dataset.import.preview');
-        Route::post('/import-store', [AdminDatasetController::class, 'importStore'])->name('dataset.importStore');
+        /*
+        |--------------------------------------------------------------------------
+        | DATASET
+        |--------------------------------------------------------------------------
+        */
 
-        Route::get('/{dataset}', [AdminDatasetController::class, 'show'])->name('admin-dataset.show');
-        Route::get('/{dataset}/edit', [AdminDatasetController::class, 'edit'])->name('dataset.edit');
-        Route::put('/{dataset}', [AdminDatasetController::class, 'update'])->name('dataset.update');
-        Route::delete('/{dataset}', [AdminDatasetController::class, 'destroy'])->name('dataset.destroy');
+        Route::get('/', [AdminDatasetController::class, 'index'])
+            ->name('dataset.index');
 
-        Route::post('/{dataset}/submit', [AdminDatasetController::class, 'submit'])->name('dataset.submit');
-        
-        Route::post('/{dataset}/data', [AdminDatasetController::class, 'storeData'])->name('dataset.data.store');
-        Route::put('/data/{data}', [AdminDatasetController::class, 'updateData'])->name('dataset.data.update');
-        Route::delete('/data/{data}', [AdminDatasetController::class, 'destroyData'])->name('dataset.data.delete');
+        Route::get('/create', [AdminDatasetController::class, 'create'])
+            ->name('dataset.create');
 
-        Route::post('{dataset}/columns', [AdminDatasetController::class, 'storeColumn'])->name('columns.store');
-        Route::put('{dataset}/columns/{index}', [AdminDatasetController::class, 'updateColumn'])->name('columns.update');
-        Route::delete('{dataset}/columns/{index}', [AdminDatasetController::class, 'destroyColumn'])->name('columns.destroy');
+        Route::post('/', [AdminDatasetController::class, 'store'])
+            ->name('dataset.store');
 
-        Route::post('{dataset}/rows', [AdminDatasetController::class, 'storeRow'])->name('rows.store');
-        Route::put('{dataset}/rows/{row}', [AdminDatasetController::class, 'updateRow'])->name('rows.update');
-        Route::delete('{dataset}/rows/{row}', [AdminDatasetController::class, 'destroyRow'])->name('rows.destroy');
+        Route::get('/import', [AdminDatasetController::class, 'import'])
+            ->name('dataset.import');
 
-        Route::post('{dataset}/filters', [AdminDatasetController::class, 'storeFilter'])->name('filters.store');
-        Route::put('{dataset}/filters/{filter}', [AdminDatasetController::class, 'updateFilter'])->name('filters.update');
-        Route::delete('{dataset}/filters/{filter}', [AdminDatasetController::class, 'destroyFilter'])->name('filters.destroy');
+        Route::post('/import-preview', [AdminDatasetController::class, 'importPreview'])
+            ->name('dataset.import.preview');
+
+        Route::post('/import-store', [AdminDatasetController::class, 'importStore'])
+            ->name('dataset.importStore');
+
+        Route::get('/{dataset}', [AdminDatasetController::class, 'show'])
+            ->name('admin-dataset.show');
+
+        Route::get('/{dataset}/edit', [AdminDatasetController::class, 'edit'])
+            ->name('dataset.edit');
+
+        Route::put('/{dataset}', [AdminDatasetController::class, 'update'])
+            ->name('dataset.update');
+
+        Route::delete('/{dataset}', [AdminDatasetController::class, 'destroy'])
+            ->name('dataset.destroy');
+
+        /*
+        |--------------------------------------------------------------------------
+        | SUBMIT DATASET BARU
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post('/{dataset}/submit', [AdminDatasetController::class, 'submit'])
+            ->name('dataset.submit');
+
+        /*
+        |--------------------------------------------------------------------------
+        | SUBMIT REVISION
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post('/{dataset}/submit-revision', [AdminDatasetController::class, 'submitRevision'])
+            ->name('dataset.submitRevision');
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATASET DATA
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post('/{dataset}/data', [AdminDatasetController::class, 'storeRow'])
+            ->name('dataset.data.store');
+
+        Route::put('/data/{data}', [AdminDatasetController::class, 'updateData'])
+            ->name('dataset.data.update');
+
+        Route::delete('/data/{data}', [AdminDatasetController::class, 'destroyData'])
+            ->name('dataset.data.delete');
+
+        /*
+        |--------------------------------------------------------------------------
+        | ROWS
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post('{dataset}/rows', [AdminDatasetController::class, 'storeRow'])
+            ->name('rows.store');
+
+        Route::put('{dataset}/rows/{row}', [AdminDatasetController::class, 'updateRow'])
+            ->name('rows.update');
+
+        Route::delete('{dataset}/rows/{row}', [AdminDatasetController::class, 'destroyRow'])
+            ->name('rows.destroy');
+
+        /*
+        |--------------------------------------------------------------------------
+        | COLUMNS
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post('{dataset}/columns', [AdminDatasetController::class, 'storeColumn'])
+            ->name('columns.store');
+
+        Route::put('{dataset}/columns/{index}', [AdminDatasetController::class, 'updateColumn'])
+            ->name('columns.update');
+
+        Route::delete('{dataset}/columns/{index}', [AdminDatasetController::class, 'destroyColumn'])
+            ->name('columns.destroy');
+
+        /*
+        |--------------------------------------------------------------------------
+        | FILTERS
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post('{dataset}/filters', [AdminDatasetController::class, 'storeFilter'])
+            ->name('filters.store');
+
+        Route::put('{dataset}/filters/{filter}', [AdminDatasetController::class, 'updateFilter'])
+            ->name('filters.update');
+
+        Route::delete('{dataset}/filters/{filter}', [AdminDatasetController::class, 'destroyFilter'])
+            ->name('filters.destroy');
     });
 
     Route::middleware(['role:superadmin,kepala_seksi'])
         ->prefix('admin-approval')
         ->group(function () {
-        Route::get('/', [AdminApprovalController::class, 'index'])->name('admin.approval.index');
-        Route::post('/{dataset}/approve', [AdminApprovalController::class, 'approve'])->name('admin.approval.approve');
-        Route::post('/{dataset}/reject', [AdminApprovalController::class, 'reject'])->name('admin.approval.reject');
-        Route::post('/{dataset}/cancel', [AdminApprovalController::class, 'cancel'])->name('admin.approval.cancel');
-        Route::get('/{dataset}', [AdminApprovalController::class, 'show'])->name('admin.approval.show');
+
+        /*
+        |--------------------------------------------------------------------------
+        | APPROVAL PAGE
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/', [AdminApprovalController::class, 'index'])
+            ->name('admin.approval.index');
+
+        Route::get('/{dataset}', [AdminApprovalController::class, 'show'])
+            ->name('admin.approval.show');
+
+        /*
+        |--------------------------------------------------------------------------
+        | APPROVE / REJECT DATASET BARU
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post('/{dataset}/approve', [AdminApprovalController::class, 'approve'])
+            ->name('admin.approval.approve');
+
+        Route::post('/{dataset}/reject', [AdminApprovalController::class, 'reject'])
+            ->name('admin.approval.reject');
+
+        /*
+        |--------------------------------------------------------------------------
+        | APPROVE / REJECT REVISION
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post('/{dataset}/approve-update', [AdminApprovalController::class, 'approveUpdate'])
+            ->name('admin.approval.approveUpdate');
+
+        Route::post('/{dataset}/reject-update', [AdminApprovalController::class, 'rejectUpdate'])
+            ->name('admin.approval.rejectUpdate');
+
+        /*
+        |--------------------------------------------------------------------------
+        | CANCEL TO DRAFT
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post('/{dataset}/cancel', [AdminApprovalController::class, 'cancel'])
+            ->name('admin.approval.cancel');
     });
 
     Route::middleware(['role:superadmin'])->group(function () {
