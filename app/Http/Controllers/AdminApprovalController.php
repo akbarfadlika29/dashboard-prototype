@@ -50,12 +50,18 @@ class AdminApprovalController extends Controller
         $dataset->load([
             'seksi',
             'creator',
-            'data',
             'filters',
             'activeRevision.changes'
         ]);
 
-        return view('admin.approval.show', compact('dataset'));
+        $datasetData = $dataset->data()
+            ->latest()
+            ->paginate(10);
+
+        return view(
+            'admin.approval.show',
+            compact('dataset', 'datasetData')
+        );
     }
 
     /*
