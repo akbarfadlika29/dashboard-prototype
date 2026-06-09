@@ -16,6 +16,8 @@
 
     $columns = $revision?->kolom ?? $dataset->kolom ?? [];
 
+    $totalChanges = $revision?->changes?->count() ?? 0;
+
     function datasetStatusConfig($dataset)
     {
         if ($dataset->activeRevision && $dataset->activeRevision->status === 'pending') {
@@ -119,15 +121,23 @@
             <div class="flex flex-wrap gap-2">
 
                 {{-- SUBMIT --}}
-                @if($canEdit && $dataset->hasDraftRevision())
+                @if(
+                    $canEdit &&
+                    $dataset->hasDraftRevision() &&
+                    $totalChanges > 0
+                )
 
                     <form method="POST"
-                          action="{{ route('dataset.submit', $dataset) }}">
+                        action="{{ route('dataset.submit', $dataset) }}">
 
                         @csrf
 
-                        <button class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition">
+                        <button
+                            class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition">
+
                             Ajukan Revision
+                            ({{ $totalChanges }} Perubahan)
+
                         </button>
 
                     </form>
@@ -161,6 +171,81 @@
     {{-- REVISION INFO --}}
     @if($revision)
 
+    @php
+
+    $createCount = $revision->changes
+        ->where('action','create_row')
+        ->count();
+
+    $updateCount = $revision->changes
+        ->where('action','update_row')
+        ->count();
+
+    $deleteCount = $revision->changes
+        ->where('action','delete_row')
+        ->count();
+
+    $datasetUpdate = $revision->changes
+        ->where('action','update_dataset')
+        ->count();
+
+    @endphp
+
+    <div class="grid md:grid-cols-4 gap-4">
+
+        <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4">
+
+            <div class="text-sm text-blue-600">
+                Update Dataset
+            </div>
+
+            <div class="text-2xl font-bold text-blue-700">
+                {{ $datasetUpdate }}
+            </div>
+
+        </div>
+
+        <div class="bg-green-50 border border-green-200 rounded-2xl p-4">
+
+            <div class="text-sm text-green-600">
+                Tambah Data
+            </div>
+
+            <div class="text-2xl font-bold text-green-700">
+                {{ $createCount }}
+            </div>
+
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+
+            <div class="text-sm text-amber-600">
+                Ubah Data
+            </div>
+
+            <div class="text-2xl font-bold text-amber-700">
+                {{ $updateCount }}
+            </div>
+
+        </div>
+
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-4">
+
+            <div class="text-sm text-red-600">
+                Hapus Data
+            </div>
+
+            <div class="text-2xl font-bold text-red-700">
+                {{ $deleteCount }}
+            </div>
+
+        </div>
+
+    </div>
+
+    @endif
+    @if($revision)
+
         <div class="bg-amber-50 border border-amber-200 rounded-3xl p-5">
 
             <div class="flex items-start justify-between gap-5">
@@ -176,6 +261,11 @@
                         <strong>{{ ucfirst($revision->status) }}</strong>
                     </p>
 
+                    <p class="text-sm text-amber-700 mt-1">
+                        Total perubahan:
+                        <strong>{{ $totalChanges }}</strong>
+                    </p>
+
                 </div>
 
                 <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold">
@@ -188,6 +278,276 @@
 
     @endif
 
+    @if($revision)
+
+    @php
+    $datasetChange = $revision->changes
+        ->firstWhere('action','update_dataset');
+    @endphp
+
+    @if($datasetChange)
+
+    <div class="bg-white rounded-3xl border border-blue-200 shadow-sm overflow-hidden">
+
+        <div class="px-6 py-5 bg-blue-50 border-b border-blue-200">
+
+            <h2 class="text-xl font-bold text-blue-800">
+                Draft Perubahan Dataset
+            </h2>
+
+        </div>
+
+        <div class="p-6">
+
+            @foreach($datasetChange->after_json as $field => $newValue)
+
+                @php
+                    $oldValue =
+                        $datasetChange->before_json[$field] ?? null;
+                @endphp
+
+                @if($oldValue != $newValue)
+
+                    <div class="mb-5">
+
+                        <div class="font-semibold text-slate-700 mb-2">
+                            {{ ucfirst($field) }}
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+
+                            <div class="rounded-xl bg-red-50 p-4">
+
+                                <div class="text-xs text-red-500 mb-1">
+                                    Sebelum
+                                </div>
+
+                                <div>
+                                    {{ is_array($oldValue) ? json_encode($oldValue, JSON_PRETTY_PRINT) : $oldValue }}
+                                </div>
+
+                            </div>
+
+                            <div class="rounded-xl bg-green-50 p-4">
+
+                                <div class="text-xs text-green-500 mb-1">
+                                    Sesudah
+                                </div>
+
+                                <div>
+                                    {{ is_array($newValue) ? json_encode($newValue, JSON_PRETTY_PRINT) : $newValue }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                @endif
+
+            @endforeach
+
+        </div>
+
+    </div>
+
+    @endif
+    @endif
+
+    @if($revision)
+
+    <div class="bg-white rounded-3xl border border-amber-200 shadow-sm overflow-hidden">
+
+        <div class="px-6 py-5 bg-amber-50 border-b border-amber-200">
+
+            <h2 class="text-xl font-bold text-amber-800">
+                Draft Perubahan Data
+            </h2>
+
+        </div>
+
+        <div class="divide-y divide-slate-200">
+
+            @foreach($revision->changes as $change)
+
+                @if(in_array($change->action,[
+                    'create_row',
+                    'update_row',
+                    'delete_row'
+                ]))
+
+                    <div class="p-6">
+
+                        <div class="mb-4">
+
+                            @switch($change->action)
+
+                                @case('create_row')
+                                    <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                                        DATA BARU
+                                    </span>
+                                @break
+
+                                @case('update_row')
+                                    <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold">
+                                        DATA DIUBAH
+                                    </span>
+                                @break
+
+                                @case('delete_row')
+                                    <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
+                                        DATA DIHAPUS
+                                    </span>
+                                @break
+
+                            @endswitch
+
+                        </div>
+
+                        {{-- CREATE --}}
+                        @if($change->action == 'create_row')
+
+                            <div class="overflow-x-auto">
+
+                                <table class="min-w-full text-sm">
+
+                                    <tbody>
+
+                                        @foreach($change->after_json['data_json'] as $field => $value)
+
+                                            <tr class="border-b">
+
+                                                <td class="py-2 font-medium text-slate-700 w-64">
+                                                    {{ $field }}
+                                                </td>
+
+                                                <td class="py-2 text-green-700">
+                                                    {{ $value }}
+                                                </td>
+
+                                            </tr>
+
+                                        @endforeach
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        @endif
+
+                        {{-- DELETE --}}
+                        @if($change->action == 'delete_row')
+
+                            <div class="overflow-x-auto">
+
+                                <table class="min-w-full text-sm">
+
+                                    <tbody>
+
+                                        @foreach($change->before_json['data_json'] as $field => $value)
+
+                                            <tr class="border-b">
+
+                                                <td class="py-2 font-medium text-slate-700 w-64">
+                                                    {{ $field }}
+                                                </td>
+
+                                                <td class="py-2 text-red-700">
+                                                    {{ $value }}
+                                                </td>
+
+                                            </tr>
+
+                                        @endforeach
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        @endif
+
+                        {{-- UPDATE --}}
+                        @if($change->action == 'update_row')
+
+                            <div class="overflow-x-auto">
+
+                                <table class="min-w-full text-sm">
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th class="text-left py-2">
+                                                Kolom
+                                            </th>
+
+                                            <th class="text-left py-2">
+                                                Sebelum
+                                            </th>
+
+                                            <th class="text-left py-2">
+                                                Sesudah
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        @foreach($change->after_json['data_json'] as $field => $value)
+
+                                            @php
+                                                $old =
+                                                    $change->before_json['data_json'][$field] ?? null;
+                                            @endphp
+
+                                            @if($old != $value)
+
+                                                <tr>
+
+                                                    <td class="py-2 font-medium">
+                                                        {{ $field }}
+                                                    </td>
+
+                                                    <td class="py-2 text-red-600">
+                                                        {{ $old }}
+                                                    </td>
+
+                                                    <td class="py-2 text-green-600">
+                                                        {{ $value }}
+                                                    </td>
+
+                                                </tr>
+
+                                            @endif
+
+                                        @endforeach
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        @endif
+
+                    </div>
+
+                @endif
+
+            @endforeach
+
+        </div>
+
+    </div>
+
+    @endif
     {{-- STRUKTUR KOLOM --}}
     <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
 
