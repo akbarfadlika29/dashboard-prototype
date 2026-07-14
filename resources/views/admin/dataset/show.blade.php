@@ -137,7 +137,8 @@
                     $canEdit &&
                     $dataset->hasDraftRevision() &&
                     $totalChanges > 0 &&
-                    $dataset->count_approved > 0
+                    $dataset->count_approved > 0 &&
+                    $dataset->activeRevision->status === 'draft'
                 )
 
                     <form method="POST"
@@ -158,7 +159,7 @@
                 @endif
 
                 {{-- DELETE --}}
-                @if($canEdit && $dataset->status === 'draft')
+                @if($canEdit && ($dataset->status === 'draft' || $dataset->status === 'rejected'))
 
                     <form method="POST"
                           action="{{ route('dataset.destroy', $dataset) }}"
@@ -636,6 +637,7 @@
                                         <input type="text"
                                                name="label"
                                                value="{{ $name }}"
+                                               @disabled(!(($canEdit && !$revision) || $dataset->activeRevision->status === 'draft'))
                                                class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
 
                                 @else
@@ -656,7 +658,7 @@
 
                             </td>
 
-                            @if($canEdit)
+                            @if(($canEdit && !$revision) || $dataset->activeRevision->status === 'draft')
 
                                 <td class="px-6 py-5">
 
@@ -771,14 +773,14 @@
                                         <input type="text"
                                                name="{{ $field }}"
                                                value="{{ $row->data_json[$field] ?? '' }}"
-                                               @disabled(!$canEdit)
+                                               @disabled(!(($canEdit && !$revision) || $dataset->activeRevision->status === 'draft'))
                                                class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
 
                                     </td>
 
                                 @endforeach
 
-                                @if($canEdit)
+                                @if(($canEdit && !$revision) || $dataset->activeRevision->status === 'draft')
 
                                     <td class="px-6 py-4">
 
@@ -838,7 +840,7 @@
     </div>
 
     {{-- ADD DATA --}}
-    @if($canEdit)
+    @if(($canEdit && !$revision) || $dataset->activeRevision->status === 'draft')
 
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
 
@@ -908,7 +910,7 @@
 
         </div>
 
-        @if($canEdit)
+        @if(($canEdit && !$revision) || $dataset->activeRevision->status === 'draft')
 
             <form method="POST"
                   action="{{ route('filters.store', $dataset) }}"
@@ -951,7 +953,7 @@
                         {{ $filter->kolom }}
                     </div>
 
-                    @if($canEdit)
+                    @if(($canEdit && !$revision) || $dataset->activeRevision->status === 'draft')
 
                         <form method="POST"
                               action="{{ route('filters.destroy', [$dataset, $filter]) }}"

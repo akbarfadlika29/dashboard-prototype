@@ -10,7 +10,7 @@
 
         if ($dataset->status === 'approved') {
             return [
-                'label' => 'Aprroved',
+                'label' => 'Approved',
                 'class' => 'bg-green-100 text-green-700'
             ];
         }
@@ -39,7 +39,7 @@
 
         if ($dataset->activeRevision && $dataset->activeRevision->status === 'approved') {
             return [
-                'label' => 'Aprroved',
+                'label' => 'Approved',
                 'class' => 'bg-green-100 text-green-700'
             ];
         }
