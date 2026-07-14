@@ -121,10 +121,23 @@
             <div class="flex flex-wrap gap-2">
 
                 {{-- SUBMIT --}}
+                @if ($canEdit && $dataset->count_approved === 0)
+                <form method="POST" action="{{ route('dataset.submit', $dataset) }}">
+                    @csrf
+                    <button class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition">
+                        @if ($dataset->status === 'draft')
+                            Ajukan Dataset
+                        @elseif ($dataset->status === 'rejected')
+                            Ajukan Kembali Dataset
+                        @endif
+                    </button>
+                </form>
+                @endif
                 @if(
                     $canEdit &&
                     $dataset->hasDraftRevision() &&
-                    $totalChanges > 0
+                    $totalChanges > 0 &&
+                    $dataset->count_approved > 0
                 )
 
                     <form method="POST"
