@@ -8,13 +8,6 @@
 @php
     function datasetStatusBadge($dataset) {
 
-        if ($dataset->activeRevision && $dataset->activeRevision->status === 'pending') {
-            return [
-                'label' => 'Pending Revision',
-                'class' => 'bg-amber-100 text-amber-700'
-            ];
-        }
-
         if ($dataset->status === 'approved') {
             return [
                 'label' => 'Aprroved',
@@ -30,6 +23,35 @@
         }
 
         if ($dataset->status === 'rejected') {
+            return [
+                'label' => 'Rejected',
+                'class' => 'bg-red-100 text-red-700'
+            ];
+        }
+
+        return [
+            'label' => 'Draft',
+            'class' => 'bg-slate-100 text-slate-700'
+        ];
+    }
+
+    function datasetStatusRevisionBadge($dataset) {
+
+        if ($dataset->activeRevision && $dataset->activeRevision->status === 'approved') {
+            return [
+                'label' => 'Aprroved',
+                'class' => 'bg-green-100 text-green-700'
+            ];
+        }
+
+        if ($dataset->activeRevision && $dataset->activeRevision->status === 'pending') {
+            return [
+                'label' => 'Waiting for Approval',
+                'class' => 'bg-blue-100 text-blue-700'
+            ];
+        }
+
+        if ($dataset->activeRevision && $dataset->activeRevision->status === 'rejected') {
             return [
                 'label' => 'Rejected',
                 'class' => 'bg-red-100 text-red-700'
@@ -216,6 +238,10 @@
                         $badge = datasetStatusBadge($item);
                     @endphp
 
+                    @php
+                        $badgeRevision = datasetStatusRevisionBadge($item);
+                    @endphp
+
                     <tr class="hover:bg-slate-50 transition">
 
                         {{-- DATASET --}}
@@ -257,17 +283,8 @@
 
                             @if($item->activeRevision)
 
-                                @php
-                                    $revisionClass = match($item->activeRevision->status) {
-                                        'draft' => 'bg-slate-100 text-slate-700',
-                                        'pending' => 'bg-amber-100 text-amber-700',
-                                        'rejected' => 'bg-red-100 text-red-700',
-                                        default => 'bg-slate-100 text-slate-700'
-                                    };
-                                @endphp
-
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $revisionClass }}">
-                                    {{ ucfirst($item->activeRevision->status) }}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $badgeRevision['class'] }}">
+                                    {{ $badgeRevision['label'] }}
                                 </span>
 
                             @else

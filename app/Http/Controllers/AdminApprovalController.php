@@ -83,6 +83,7 @@ class AdminApprovalController extends Controller
             'status' => 'approved',
             'approved_by' => auth()->id(),
             'approved_at' => now(),
+            'count_approved' => $dataset->count_approved + 1,
         ]);
 
         DatasetApprovalLog::create([
@@ -114,7 +115,7 @@ class AdminApprovalController extends Controller
         );
 
         $dataset->update([
-            'status' => 'rejected'
+            'status' => 'rejected',
         ]);
 
         DatasetApprovalLog::create([

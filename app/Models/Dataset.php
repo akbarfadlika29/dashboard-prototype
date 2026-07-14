@@ -30,7 +30,8 @@ class Dataset extends Model
         'status',
         'created_by',
         'approved_by',
-        'approved_at'
+        'approved_at',
+        'count_approved',
     ];
 
     protected $casts = [
