@@ -134,6 +134,8 @@ class AdminDatasetController extends Controller
             ]
         );
 
+        // return response()->json($dataset, 200, [], JSON_PRETTY_PRINT);
+
         return view('admin.dataset.show', compact(
             'dataset',
             'data',
