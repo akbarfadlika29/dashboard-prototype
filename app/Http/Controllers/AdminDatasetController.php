@@ -242,6 +242,112 @@ class AdminDatasetController extends Controller
             ->with('success', 'Perubahan disimpan ke draft revision');
     }
 
+    public function updateColumn(Request $request, Dataset $dataset, $index)
+    {
+        // return response()->json($request, 200, [], JSON_PRETTY_PRINT);
+        // Requirement:
+        // - Edit kolom dataset
+        // - Edit nama kolom
+        // - Edit key / schema_json
+        // - Edit tipe kolom
+        // - Jika key berubah, seluruh data_json ikut disesuaikan
+        // - Dataset otomatis kembali ke draft
+
+        // $this->ensureEditable($dataset);
+
+        $request->validate([
+            'label' => 'required|string',
+            // 'key'   => 'required|string|alpha_dash',
+            // 'type'  => 'required|in:text,number,date',
+        ]);
+
+        $kolom = $dataset->kolom ?? [];
+        $schema = $dataset->schema_json ?? [];
+
+        if (!isset($kolom[$index]) || !isset($schema[$index])) {
+            abort(404);
+        }
+
+        $oldKey = $schema[$index]['name'];
+
+        $oldType = $kolom[$index]['type'] ?? 'text';
+
+        // rebuild array supaya perubahan JSON terdeteksi oleh Eloquent
+        $kolom[$index] = [
+            'name' => $request->label,
+            'type' => $oldType,
+        ];
+
+        $schema[$index] = [
+            'name' => $request->label,
+            'type' => $oldType,
+        ];
+
+        // update semua data_json bila key berubah
+        foreach ($dataset->data as $row) {
+            $json = $row->data_json ?? [];
+
+            if (
+                $oldKey !== $request->label &&
+                array_key_exists($oldKey, $json)
+            ) {
+                $json[$request->label] = $json[$oldKey];
+                unset($json[$oldKey]);
+            }
+
+            $row->update([
+                'data_json' => $json,
+            ]);
+        }
+
+        $dataset->kolom = $kolom;
+        $dataset->schema_json = $schema;
+        $dataset->status = 'draft';
+        $dataset->save();
+
+        $newKey = $request->label;
+
+        if ($oldKey !== $newKey) {
+            DatasetFilter::where('dataset_id', $dataset->id)
+                ->where('kolom', $oldKey)
+                ->update([
+                    'kolom' => $newKey
+                ]);
+        }
+
+        return back()->with('success', 'Kolom berhasil diubah');
+    }
+
+    public function destroyColumn(Dataset $dataset, $index)
+    {
+        // $this->ensureEditable($dataset);
+
+        $kolom = $dataset->kolom;
+        $schema = $dataset->schema_json;
+
+        $removedKey = $schema[$index]['name'];
+
+        unset($kolom[$index], $schema[$index]);
+
+        foreach ($dataset->data as $row) {
+            $json = $row->data_json;
+            unset($json[$removedKey]);
+            $row->update(['data_json' => $json]);
+        }
+
+        DatasetFilter::where('dataset_id', $dataset->id)
+            ->where('kolom', $removedKey)
+            ->delete();
+
+        $dataset->update([
+            'kolom' => array_values($kolom),
+            'schema_json' => array_values($schema),
+            'status' => 'draft',
+        ]);
+
+        return back()->with('success', 'Kolom berhasil dihapus');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | DESTROY DATASET
@@ -250,7 +356,7 @@ class AdminDatasetController extends Controller
 
     public function destroy(Dataset $dataset)
     {
-        $this->authorizeEditable($dataset);
+        // $this->authorizeEditable($dataset);
 
         abort_if(
             $dataset->isApproved(),
