@@ -60,7 +60,7 @@ class DatasetController extends Controller
 
         // return response()->json($dataset, 200, [], JSON_PRETTY_PRINT);
 
-        return view('public.dataset.show', compact(
+        return view('admin.dashboard.dataset.show', compact(
             'dataset',
             'datasetData',
             'perPage',

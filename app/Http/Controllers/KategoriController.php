@@ -15,7 +15,7 @@ class KategoriController extends Controller
         $kategori = Kategori::orderBy('nama','asc')->latest()->get();
         $dataset = Dataset::where('status','approved')->latest()->get();
 
-        return view('public.kategori.index', compact('kategori','dataset'));
+        return view('admin.dashboard.kategori.index', compact('kategori','dataset'));
     }
 
     public function show($id, StatisticService $statisticService)
@@ -28,7 +28,7 @@ class KategoriController extends Controller
 
         // return response()->json($statistics, 200, [], JSON_PRETTY_PRINT);
 
-        return view('public.kategori.show', compact(
+        return view('admin.dashboard.kategori.show', compact(
             'kategori',
             'dataset',
             'statistics'

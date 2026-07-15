@@ -1,4 +1,4 @@
-@extends('layouts.public')
+@extends('layouts.admin')
 
 @section('title', $dataset->nama)
 
@@ -24,24 +24,12 @@
     box-shadow:none;
 }
 
-.dark .ts-control{
-    background:#0f172a;
-    border-color:#334155;
-    color:#fff;
-}
-
 .ts-control input{ font-size:14px !important; }
 
 .ts-dropdown{
     border-radius:0.85rem;
     overflow:hidden;
     border:1px solid #e5e7eb;
-}
-
-.dark .ts-dropdown{
-    background:#0f172a;
-    border-color:#334155;
-    color:#fff;
 }
 
 .ts-wrapper.focus .ts-control{
@@ -75,19 +63,19 @@
 
             <div class="flex flex-wrap gap-2">
 
-                <a href="{{ route('dataset.export.pdf', [$dataset->slug ?? $dataset->id] + request()->query()) }}"
+                <a href="{{ route('admin.dataset.export.pdf', [$dataset->slug ?? $dataset->id] + request()->query()) }}"
                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/90 hover:bg-red-600 text-white text-sm font-medium transition">
                     <i class="fa-solid fa-file-pdf"></i>
                     PDF
                 </a>
 
-                <a href="{{ route('dataset.export.excel', [$dataset->slug ?? $dataset->id] + request()->query()) }}"
+                <a href="{{ route('admin.dataset.export.excel', [$dataset->slug ?? $dataset->id] + request()->query()) }}"
                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/90 hover:bg-emerald-600 text-white text-sm font-medium transition">
                     <i class="fa-solid fa-file-excel"></i>
                     Excel
                 </a>
 
-                <a href="{{ route('kategori.show', $dataset->kategori_id) }}"
+                <a href="{{ route('admin.dashboard.kategori.show', $dataset->kategori_id) }}"
                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/15 hover:bg-white/25 border border-white/30 text-sm font-medium transition">
                     <i class="fa-solid fa-arrow-left"></i>
                     Kembali
@@ -105,7 +93,12 @@
 </section>
 
 {{-- FILTER BAR --}}
-<div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-5 shadow-sm mb-6">
+<div class="bg-white
+            rounded-2xl
+            border border-slate-200
+            p-5
+            shadow-sm
+            mb-6">
 
     <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-5">
 
@@ -135,8 +128,8 @@
                     Filter
                 </button>
 
-                <a href="{{ route('dataset.show', [$dataset->slug ?? $dataset->id, 'per_page' => $perPage]) }}"
-                   class="h-[42px] px-4 rounded-xl bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-sm flex items-center justify-center transition">
+                <a href="{{ route('admin.dashboard.dataset.show', [$dataset->slug ?? $dataset->id, 'per_page' => $perPage]) }}"
+   class="h-[42px] px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-sm flex items-center justify-center transition">
                     Reset
                 </a>
 
@@ -151,18 +144,18 @@
                 <input type="hidden" name="{{ $key }}" value="{{ $value }}">
             @endforeach
 
-            <span class="text-sm text-gray-500 dark:text-slate-400 whitespace-nowrap">Tampilkan</span>
+            <span class="text-sm text-slate-500 whitespace-nowrap">Tampilkan</span>
 
             <select name="per_page"
                     onchange="this.form.submit()"
-                    class="h-[42px] px-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm">
+                    class="h-[42px] px-3 rounded-xl border border-slate-300 bg-white text-sm">
                 <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
                 <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
                 <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
                 <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
             </select>
 
-            <span class="text-sm text-gray-500 dark:text-slate-400 whitespace-nowrap">baris</span>
+            <span class="text-sm text-slate-500 whitespace-nowrap">baris</span>
 
         </form>
 
@@ -172,24 +165,28 @@
 
 {{-- INFO --}}
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
-    <p class="text-sm text-gray-500 dark:text-slate-400">
+    <p class="text-sm text-slate-500">
         Menampilkan {{ $datasetData->firstItem() ?? 0 }} - {{ $datasetData->lastItem() ?? 0 }}
         dari {{ $datasetData->total() }} data
     </p>
 </div>
 
 {{-- TABLE --}}
-<div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
+<div class="bg-white
+            rounded-2xl
+            border border-slate-200
+            shadow-sm
+            overflow-hidden">
 
     <div class="overflow-x-auto">
         <table class="min-w-full text-sm">
 
-            <thead class="bg-gray-50 dark:bg-slate-900">
+            <thead class="bg-slate-50">
                 <tr>
-                    <th class="px-4 py-3 border-b text-center font-semibold w-16">No</th>
+                    <th class="px-4 py-3 border-b border-slate-200 bg-slate-50 text-center font-semibold text-slate-700 w-16">No</th>
 
                     @foreach($dataset->kolom as $column)
-                    <th class="px-4 py-3 border-b text-left font-semibold whitespace-nowrap">
+                    <th class="px-4 py-3 border-b border-slate-200 bg-slate-50 text-left font-semibold text-slate-700 whitespace-nowrap">
                         {{ $column['name'] }}
                     </th>
                     @endforeach
@@ -198,7 +195,7 @@
 
             <tbody>
                 @forelse($datasetData as $index => $row)
-                <tr class="hover:bg-gray-50 dark:hover:bg-slate-900/60 transition">
+                <tr class="hover:bg-emerald-50 transition-colors">
 
                     <td class="px-4 py-3 border-b text-center text-gray-500">
                         {{ $datasetData->firstItem() + $index }}
@@ -214,7 +211,7 @@
                 @empty
                 <tr>
                     <td colspan="{{ count($dataset->schema_json) + 1 }}"
-                        class="px-6 py-12 text-center text-gray-500 dark:text-slate-400">
+                        class="px-6 py-12 text-center text-slate-500">
                         Belum ada data tersedia.
                     </td>
                 </tr>
@@ -227,7 +224,7 @@
 </div>
 
 {{-- FOOT INFO --}}
-<p class="text-sm text-gray-500 dark:text-slate-400 mt-4">
+<p class="text-sm text-slate-500 mt-4">
     Menampilkan {{ $datasetData->firstItem() ?? 0 }} - {{ $datasetData->lastItem() ?? 0 }}
     dari {{ $datasetData->total() }} data
 </p>
@@ -242,7 +239,7 @@
             <span class="px-3 py-2 rounded-xl border text-gray-400">‹</span>
         @else
             <a href="{{ $datasetData->previousPageUrl() }}"
-               class="px-3 py-2 rounded-xl border hover:bg-gray-100 dark:hover:bg-slate-700 transition">‹</a>
+               class="px-3 py-2 rounded-xl border hover:bg-gray-100 hover:bg-slate-100 transition">‹</a>
         @endif
 
         @php
@@ -262,7 +259,7 @@
                 <span class="px-3 py-2 rounded-xl bg-emerald-600 text-white">{{ $page }}</span>
             @else
                 <a href="{{ $datasetData->url($page) }}"
-                   class="px-3 py-2 rounded-xl border hover:bg-gray-100 dark:hover:bg-slate-700 transition">
+                   class="px-3 py-2 rounded-xl border hover:bg-gray-100 hover:bg-slate-100 transition">
                     {{ $page }}
                 </a>
             @endif
@@ -281,7 +278,7 @@
 
         @if ($datasetData->hasMorePages())
             <a href="{{ $datasetData->nextPageUrl() }}"
-               class="px-3 py-2 rounded-xl border hover:bg-gray-100 dark:hover:bg-slate-700 transition">›</a>
+               class="px-3 py-2 rounded-xl border hover:bg-gray-100 hover:bg-slate-100 transition">›</a>
         @else
             <span class="px-3 py-2 rounded-xl border text-gray-400">›</span>
         @endif

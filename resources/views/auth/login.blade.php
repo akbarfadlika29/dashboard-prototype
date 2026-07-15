@@ -23,13 +23,6 @@
 
 <div class="w-full max-w-md">
 
-    {{-- BACK --}}
-    <a href="{{ route('kategori.index') }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-emerald-600 mb-4 transition">
-        <i class="fa-solid fa-arrow-left"></i>
-        Kembali ke Portal
-    </a>
-
     {{-- CARD --}}
     <div class="bg-white rounded-3xl shadow-xl p-8">
 

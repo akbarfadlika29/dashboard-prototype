@@ -12,23 +12,20 @@ use App\Http\Controllers\AdminSeksiController;
 use App\Http\Controllers\AdminKategoriController;
 use App\Http\Controllers\AdminDashboardController;
 
-Route::get('/', [KategoriController::class, 'index'])->name('kategori.index');
-Route::get('/kategori/{id}', [KategoriController::class, 'show'])->name('kategori.show');
-Route::get('/dataset/{dataset}', [DatasetController::class, 'show'])->name('dataset.show');
-Route::get('/dataset/{dataset}/export/csv', [DatasetController::class, 'exportCsv'])->name('dataset.export.csv');
-Route::get('/dataset/{dataset}/export/excel', [DatasetController::class, 'exportExcel'])->name('dataset.export.excel');
-Route::get('/dataset/{dataset}/export/pdf', [DatasetController::class, 'exportPdf'])->name('dataset.export.pdf');
+Route::redirect('/', '/login');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/otp', [AuthController::class, 'showOtp'])->name('otp.form');
-Route::post('/otp', [AuthController::class, 'verifyOtp'])->name('otp.verify');
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])
-        ->name('admin.dashboard');
+    Route::get('/admin-dashboard', [KategoriController::class, 'index'])
+        ->name('admin.dashboard.index');
+    Route::get('/admin-dashboard/kategori/{id}', [KategoriController::class, 'show'])->name('admin.dashboard.kategori.show');
+    Route::get('/admin-dashboard/dataset/{dataset}', [DatasetController::class, 'show'])->name('admin.dashboard.dataset.show');
+    Route::get('/admin-dashboard/dataset/{dataset}/export/pdf', [DatasetController::class, 'exportPdf'])->name('admin.dataset.export.pdf');
+    Route::get('/admin-dashboard/dataset/{dataset}/export/excel', [DatasetController::class, 'exportExcel'])->name('admin.dataset.export.excel');
 
     Route::middleware(['role:superadmin,admin_umum,admin_seksi'])
         ->prefix('admin-dataset')

@@ -30,7 +30,7 @@ class AuthController extends Controller
                 return redirect()->route('admin.approval.index');
             }
 
-            return redirect()->route('dataset.index');
+            return redirect()->route('admin.dashboard.index');
         }
 
         return back()->withErrors([
