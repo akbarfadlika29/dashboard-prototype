@@ -1,4 +1,4 @@
-@extends('layouts.public')
+@extends('layouts.admin')
 
 @section('title', $kategori->nama . ' - Portal Data & Informasi')
 
@@ -29,7 +29,7 @@
             </div>
 
             <div>
-                <a href="{{ route('kategori.index') }}"
+                <a href="{{ route('admin.dashboard.index') }}"
                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/15 hover:bg-white/25 border border-white/30 backdrop-blur text-sm font-medium transition">
                     <i class="fa-solid fa-arrow-left"></i>
                     Kembali
@@ -47,7 +47,7 @@
 
 {{-- TAB NAV --}}
 <div class="mb-8">
-    <div class="inline-flex bg-gray-100 dark:bg-slate-800 p-1 rounded-2xl gap-1">
+    <div class="inline-flex bg-slate-100 border border-slate-200 p-1 rounded-2xl gap-1">
 
         <button onclick="showTab('dataset')"
                 id="btn-dataset"
@@ -73,25 +73,37 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             @foreach($dataset as $item)
-                <a href="{{ route('dataset.show', $item->id) }}" class="block group">
+                <a href="{{ route('admin.dashboard.dataset.show', $item->id) }}" class="block group">
 
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700
-                                p-6 h-full shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300">
+                    <div class="bg-white
+            border border-slate-200
+            rounded-2xl
+            p-6
+            h-full
+            shadow-sm
+            hover:border-emerald-300
+            hover:shadow-lg
+            hover:-translate-y-1
+            transition-all duration-300">
 
                         <div class="flex items-start gap-4">
 
-                            <div class="w-11 h-11 rounded-xl bg-emerald-50 dark:bg-slate-700
-                                        flex items-center justify-center shrink-0
-                                        group-hover:scale-110 transition">
+                            <div class="w-12 h-12
+            rounded-xl
+            bg-emerald-50
+            flex items-center justify-center
+            shrink-0
+            group-hover:scale-110
+            transition-all duration-300">
                                 <i class="fa-solid fa-database text-emerald-600"></i>
                             </div>
 
                             <div class="flex-1 min-w-0">
-                                <h3 class="text-lg font-semibold leading-snug group-hover:text-emerald-600 transition">
+                                <h3 class="text-lg font-bold text-slate-800 leading-snug group-hover:text-emerald-700 transition-colors">
                                     {{ $item->nama }}
                                 </h3>
 
-                                <p class="text-sm text-gray-500 dark:text-slate-400 mt-2 line-clamp-3">
+                                <p class="text-sm text-slate-500 mt-2 line-clamp-3">
                                     {{ $item->deskripsi }}
                                 </p>
 
@@ -110,8 +122,8 @@
 
         </div>
     @else
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-gray-300 dark:border-slate-700 p-10 text-center">
-            <div class="w-14 h-14 mx-auto rounded-2xl bg-gray-100 dark:bg-slate-700 flex items-center justify-center mb-4">
+        <div class="bg-white rounded-2xl border border-dashed border-slate-300 p-10 text-center shadow-sm">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 flex items-center justify-center mb-4">
                 <i class="fa-solid fa-folder-open text-gray-400"></i>
             </div>
             <h3 class="font-semibold text-lg">Belum Ada Dataset</h3>
@@ -131,7 +143,7 @@
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
         @if(isset($statistics['top_kecamatan']) && $kategori->id === $statistics['top_kecamatan']['kategori_id'])
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-6 shadow-sm">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
             <div class="flex items-center justify-between mb-4">
                 <h4 class="font-semibold">5 Kecamatan Perkawinan Terbanyak</h4>
                 <span class="text-xs px-2 py-1 rounded-lg bg-emerald-50 text-emerald-600">2025</span>
@@ -144,7 +156,7 @@
         @endif
 
         @if(isset($statistics['nikah_lokasi']) && $kategori->id === $statistics['nikah_lokasi']['kategori_id'])
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-6 shadow-sm">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
             <div class="flex items-center justify-between mb-4">
                 <h4 class="font-semibold">Nikah Dalam & Luar Kantor</h4>
                 <span class="text-xs px-2 py-1 rounded-lg bg-emerald-50 text-emerald-600">2025</span>
@@ -160,7 +172,7 @@
             !isset($statistics['top_kecamatan']) &&
             !isset($statistics['nikah_lokasi'])
         )
-        <div class="xl:col-span-2 bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-gray-300 dark:border-slate-700 p-10 text-center">
+        <div class="xl:col-span-2 bg-white rounded-2xl border border-dashed border-slate-300 p-10 text-center shadow-sm">
             <i class="fa-solid fa-chart-line text-3xl text-gray-300 mb-3"></i>
             <h3 class="font-semibold">Belum Ada Grafik</h3>
             <p class="text-sm text-gray-500 dark:text-slate-400 mt-2">
@@ -182,22 +194,19 @@
     border-radius: 1rem;
     font-size: .95rem;
     font-weight: 600;
-    transition: .25s ease;
-    color: #64748b;
+    color:#64748b;
+    transition:all .25s ease;
 }
-.dark .tab-btn{ color:#cbd5e1; }
 
 .tab-btn:hover{
     color:#059669;
+    background:#ecfdf5;
 }
 
 .active-tab{
-    background: white;
+    background:white;
     color:#059669 !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,.08);
-}
-.dark .active-tab{
-    background:#0f172a;
+    box-shadow:0 2px 6px rgba(15,23,42,.08);
 }
 </style>
 @endpush

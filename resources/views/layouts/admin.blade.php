@@ -19,7 +19,7 @@
 </head>
 
 <body
-    class="bg-gray-100"
+    class="bg-slate-50"
     x-data="{
         sidebarOpen: localStorage.getItem('sidebarOpen') !== 'false'
     }"
@@ -84,16 +84,18 @@
             </div>
         </div>
 
+        @php
+        $activeClass = 'bg-white text-green-800 font-semibold shadow';
+        $inactiveClass = 'text-green-100 hover:bg-green-700 hover:text-white';
+        @endphp
         {{-- MENU --}}
         <nav class="flex-1 px-4 py-5 space-y-1 overflow-y-auto">
 
             {{-- DASHBOARD --}}
-            <a href="{{ route('admin.dashboard') }}"
+            <a href="{{ route('admin.dashboard.index') }}"
                :class="sidebarOpen ? 'justify-start' : 'justify-center'"
-                class="flex items-center gap-3 px-4 py-3 rounded-xl transition"
-               {{ request()->routeIs('admin.dashboard')
-                    ? 'bg-white text-green-800 font-semibold shadow'
-                    : 'text-green-100 hover:bg-green-700 hover:text-white' }}">
+                class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                {{ request()->routeIs('admin.dashboard.*') ? $activeClass : $inactiveClass }}">
 
                 <i class="fa-solid fa-chart-line w-5 text-center"></i>
                 <span
@@ -109,10 +111,8 @@
             @if(in_array(auth()->user()->role, ['superadmin', 'admin_umum', 'admin_seksi']))
                 <a href="{{ route('dataset.index') }}"
                    :class="sidebarOpen ? 'justify-start' : 'justify-center'"
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition"
-                   {{ request()->routeIs('dataset.*') || request()->routeIs('admin-dataset.*')
-                        ? 'bg-white text-green-800 font-semibold shadow'
-                        : 'text-green-100 hover:bg-green-700 hover:text-white' }}">
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                    {{ request()->routeIs('dataset.*') ? $activeClass : $inactiveClass }}">
 
                     <i class="fa-solid fa-database w-5 text-center"></i>
                     <span
@@ -129,10 +129,8 @@
             @if(in_array(auth()->user()->role, ['superadmin', 'kepala_seksi']))
                 <a href="{{ route('admin.approval.index') }}"
                    :class="sidebarOpen ? 'justify-start' : 'justify-center'"
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition"
-                   {{ request()->routeIs('admin.approval.*')
-                        ? 'bg-white text-green-800 font-semibold shadow'
-                        : 'text-green-100 hover:bg-green-700 hover:text-white' }}">
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                    {{ request()->routeIs('admin.approval.*') ? $activeClass : $inactiveClass }}">
 
                     <i class="fa-solid fa-circle-check w-5 text-center"></i>
                     <span
@@ -149,10 +147,8 @@
             @if(in_array(auth()->user()->role, ['superadmin', 'admin_umum']))
                 <a href="{{ route('admin.kategori.index') }}"
                    :class="sidebarOpen ? 'justify-start' : 'justify-center'"
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition"
-                   {{ request()->routeIs('admin.kategori.*')
-                        ? 'bg-white text-green-800 font-semibold shadow'
-                        : 'text-green-100 hover:bg-green-700 hover:text-white' }}">
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                    {{ request()->routeIs('admin.kategori.*') ? $activeClass : $inactiveClass }}">
 
                     <i class="fa-solid fa-folder-tree w-5 text-center"></i>
                     <span
@@ -169,10 +165,8 @@
             @if(auth()->user()->role === 'superadmin')
                 <a href="{{ route('admin.seksi.index') }}"
                    :class="sidebarOpen ? 'justify-start' : 'justify-center'"
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition"
-                   {{ request()->routeIs('admin.seksi.*')
-                        ? 'bg-white text-green-800 font-semibold shadow'
-                        : 'text-green-100 hover:bg-green-700 hover:text-white' }}">
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                    {{ request()->routeIs('admin.seksi.*') ? $activeClass : $inactiveClass }}">
 
                     <i class="fa-solid fa-building-columns w-5 text-center"></i>
                     <span
@@ -189,10 +183,8 @@
             @if(auth()->user()->role === 'superadmin')
                 <a href="{{ route('admin.user.index') }}"
                    :class="sidebarOpen ? 'justify-start' : 'justify-center'"
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition"
-                   {{ request()->routeIs('admin.user.*')
-                        ? 'bg-white text-green-800 font-semibold shadow'
-                        : 'text-green-100 hover:bg-green-700 hover:text-white' }}">
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                    {{ request()->routeIs('admin.user.*') ? $activeClass : $inactiveClass }}">
 
                     <i class="fa-solid fa-users w-5 text-center"></i>
                     <span
@@ -209,26 +201,50 @@
 
         {{-- FOOTER --}}
         <div class="border-t border-green-700 p-4">
-            <form method="POST" action="{{ route('logout') }}">
+
+            <form
+                method="POST"
+                action="{{ route('logout') }}"
+                x-data="{ loading:false }"
+                @submit="loading = true"
+            >
                 @csrf
 
                 <button
                     type="submit"
-                    class="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 transition text-white py-3 rounded-xl font-medium"
+                    :disabled="loading"
+                    :class="loading
+                        ? 'opacity-70 cursor-not-allowed'
+                        : 'hover:bg-red-600'"
+                    class="w-full flex items-center justify-center gap-2 bg-red-500 transition text-white py-3 rounded-xl font-medium"
                 >
 
-                    <i class="fa-solid fa-right-from-bracket"></i>
+                    {{-- ICON NORMAL --}}
+                    <i
+                        x-show="!loading"
+                        x-transition
+                        class="fa-solid fa-right-from-bracket"
+                    ></i>
 
+                    {{-- SPINNER --}}
+                    <i
+                        x-show="loading"
+                        x-transition
+                        class="fa-solid fa-spinner fa-spin"
+                    ></i>
+
+                    {{-- TEXT --}}
                     <span
                         x-show="sidebarOpen"
                         x-transition
                         x-cloak
-                    >
-                        Logout
-                    </span>
+                        x-text="loading ? 'Logging out...' : 'Logout'"
+                    ></span>
 
                 </button>
+
             </form>
+
         </div>
 
     </aside>
@@ -240,7 +256,10 @@
     >
 
         {{-- TOPBAR --}}
-        <header class="bg-white border-b border-gray-200 px-8 py-5 flex items-center justify-between shadow-sm">
+        <header
+            class="fixed top-0 right-0 z-40 bg-white border-b border-gray-200 px-8 py-5 flex items-center justify-between shadow-sm transition-all duration-300"
+            :class="sidebarOpen ? 'left-72' : 'left-20'"
+        >
 
             <div class="flex items-center gap-4">
 
@@ -274,7 +293,7 @@
         </header>
 
         {{-- CONTENT --}}
-        <main class="flex-1 overflow-y-auto p-8">
+        <main class="flex-1 overflow-y-auto p-8 pt-28">
 
             @if(session('success'))
                 <div class="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">
