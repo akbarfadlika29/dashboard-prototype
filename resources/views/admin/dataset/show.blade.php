@@ -771,7 +771,7 @@
                                     <td class="px-6 py-4 min-w-[220px]">
 
                                         <input type="text"
-                                               name="{{ $field }}"
+                                               name="data[{{ $field }}]"
                                                value="{{ $row->data_json[$field] ?? '' }}"
                                                @disabled(!(($canEdit && !$revision) || $dataset->activeRevision->status === 'draft'))
                                                class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">

@@ -444,7 +444,7 @@ class AdminDatasetController extends Controller
                 ? ($key['key'] ?? $key['name'])
                 : $key;
 
-            $json[$field] = $request->input($field);
+            $json[$field] = $request->input("data.$field");
         }
 
         /*
