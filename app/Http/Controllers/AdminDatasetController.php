@@ -792,7 +792,25 @@ class AdminDatasetController extends Controller
 
         $filePath = Storage::path($request->file_path);
 
-        $rows = array_map('str_getcsv', file($filePath));
+        // baca seluruh file
+        $content = file_get_contents($filePath);
+
+        // ubah ke UTF-8 jika diperlukan
+        $encoding = mb_detect_encoding(
+            $content,
+            ['UTF-8', 'Windows-1252', 'ISO-8859-1'],
+            true
+        );
+
+        if ($encoding && $encoding !== 'UTF-8') {
+            $content = mb_convert_encoding($content, 'UTF-8', $encoding);
+        }
+
+        // pecah menjadi baris
+        $lines = preg_split("/\r\n|\n|\r/", $content);
+
+        // parse CSV
+        $rows = array_map('str_getcsv', $lines);
 
         $rows = array_filter($rows, function ($row) {
             return count(array_filter($row, fn($cell) => trim($cell) !== '')) > 0;
