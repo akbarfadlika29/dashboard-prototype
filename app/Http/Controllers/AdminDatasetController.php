@@ -892,6 +892,114 @@ class AdminDatasetController extends Controller
             ->with('success', 'Dataset berhasil diimport.');
     }
 
+    public function importFiles()
+    {
+        $kategori = Kategori::all();
+        $seksi = Seksi::all();
+
+        return view('admin.dataset.import_files', compact('kategori', 'seksi'));
+    }
+
+    public function importFilesPreview(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'kategori_id' => 'required|exists:kategori,id',
+            'seksi_id' => 'required|exists:seksi,id',
+            'file' => 'required|mimes:pdf,xlsx,xls,jpg,jpeg,png|max:10240', 
+        ]);
+
+        $file = $request->file('file');
+
+// Ambil semua informasi dulu
+$originalName = $file->getClientOriginalName();
+$extension    = strtoupper($file->getClientOriginalExtension());
+$mime         = $file->getMimeType();
+$size         = $file->getSize();
+$sizeHuman    = number_format($size / 1024, 2) . ' KB';
+
+// Baru dipindahkan
+$tempDirectory = public_path('uploads/temp');
+
+if (!file_exists($tempDirectory)) {
+    mkdir($tempDirectory, 0755, true);
+}
+
+$tempName = time().'_'.Str::random(10).'.'.$file->getClientOriginalExtension();
+
+$file->move($tempDirectory, $tempName);
+
+$tempPath = 'uploads/temp/'.$tempName;
+
+return view('admin.dataset.import_files_preview', [
+    'request'       => $request->except('file'),
+    'file_path'     => $tempPath,
+    'original_name' => $originalName,
+    'extension'     => $extension,
+    'mime'          => $mime,
+    'size'          => $size,
+    'size_human'    => $sizeHuman,
+]);
+    }
+
+    public function importFilesStore(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'kategori_id' => 'required|exists:kategori,id',
+            'seksi_id' => 'required|exists:seksi,id',
+            'file_path' => 'required|string',
+            'original_name' => 'required|string',
+            'mime' => 'required|string',
+            'size' => 'required|numeric',
+        ]);
+
+        $tempFile = public_path($request->file_path);
+
+        if (!file_exists($tempFile)) {
+            return back()->with('error', 'File temporary tidak ditemukan.');
+        }
+
+        $extension = pathinfo($tempFile, PATHINFO_EXTENSION);
+
+        $newName = Str::uuid() . '.' . $extension;
+
+        // Folder tujuan
+        $finalDirectory = public_path('uploads/dataset');
+
+        // Buat folder jika belum ada
+        if (!file_exists($finalDirectory)) {
+            mkdir($finalDirectory, 0755, true);
+        }
+
+        $finalFile = $finalDirectory . '/' . $newName;
+
+        // Pindahkan file
+        rename($tempFile, $finalFile);
+
+        // Path yang disimpan di database
+        $finalPath = 'uploads/dataset/' . $newName;
+
+        Dataset::create([
+            'nama' => $request->nama,
+            'slug' => Str::slug($request->nama).'-'.time(),
+            'kategori_id' => $request->kategori_id,
+            'seksi_id' => $request->seksi_id,
+            'schema_json' => null,
+            'kolom' => null,
+            'status' => 'draft',
+            'created_by' => auth()->id(),
+            'count_approved' => 0,
+            'first_created' => 'files',
+            'file_storage' => $finalPath,
+            'file_original_name' => $request->original_name,
+            'file_mime' => $request->mime,
+            'file_size' => $request->size,
+        ]);
+
+        return redirect()->route('dataset.index')->with('success', 'Dataset berhasil dibuat.');
+    }
+
     private function detectColumnType(array $values)
     {
         $values = array_filter($values, fn($v) => $v !== null && trim($v) !== '');

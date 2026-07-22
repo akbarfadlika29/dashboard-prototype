@@ -55,6 +55,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/import-store', [AdminDatasetController::class, 'importStore'])
             ->name('dataset.importStore');
 
+        Route::get('/import-files', [AdminDatasetController::class, 'importFiles'])
+            ->name('dataset.importFiles');
+
+        Route::post('/import-files-preview', [AdminDatasetController::class, 'importFilesPreview'])
+            ->name('dataset.importFiles.preview');
+
+        Route::post('/import-files-store', [AdminDatasetController::class, 'importFilesStore'])
+            ->name('dataset.importFilesStore');
+
         Route::get('/{dataset}', [AdminDatasetController::class, 'show'])
             ->name('admin-dataset.show');
 

@@ -161,7 +161,7 @@
                 class="w-full border border-slate-200 rounded-2xl p-5 hover:bg-slate-50 transition text-left">
 
                 <div class="font-semibold text-slate-800">
-                    ✍️ Input Manual
+                    <i class="fa-solid fa-pencil"></i> Input Manual
                 </div>
 
                 <div class="text-sm text-slate-500 mt-1">
@@ -169,15 +169,27 @@
                 </div>
             </button>
 
-            <button onclick="goToImport()"
+            <button onclick="goToImportCSV()"
                 class="w-full border border-slate-200 rounded-2xl p-5 hover:bg-slate-50 transition text-left">
 
                 <div class="font-semibold text-slate-800">
-                    📄 Import CSV
+                    <i class="fa-solid fa-file-csv"></i> Import CSV
                 </div>
 
                 <div class="text-sm text-slate-500 mt-1">
-                    Upload file CSV
+                    Upload file CSV format standar
+                </div>
+            </button>
+
+            <button onclick="goToImportFiles()"
+                class="w-full border border-slate-200 rounded-2xl p-5 hover:bg-slate-50 transition text-left">
+
+                <div class="font-semibold text-slate-800">
+                    <i class="fa-solid fa-file"></i> Import PDF/XLSX/JPG/PNG
+                </div>
+
+                <div class="text-sm text-slate-500 mt-1">
+                    Upload file berdasarkan format Anda
                 </div>
             </button>
 
@@ -356,8 +368,12 @@ function goToManual() {
     window.location.href = "{{ route('dataset.create') }}";
 }
 
-function goToImport() {
+function goToImportCSV() {
     window.location.href = "{{ route('dataset.import') }}";
+}
+
+function goToImportFiles() {
+    window.location.href = "{{ route('dataset.importFiles') }}";
 }
 
 </script>
