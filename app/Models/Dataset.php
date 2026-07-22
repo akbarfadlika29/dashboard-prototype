@@ -32,6 +32,10 @@ class Dataset extends Model
         'approved_by',
         'approved_at',
         'count_approved',
+        'file_storage',
+        'file_original_name',
+        'file_mime',
+        'file_size',
     ];
 
     protected $casts = [
