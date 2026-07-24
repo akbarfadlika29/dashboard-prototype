@@ -145,12 +145,12 @@
             @if($dataset->hasDraftRevision())
                 @php
                     $extension = strtolower(pathinfo($dataset->activeRevision->latestFileChange->after_file_original_name, PATHINFO_EXTENSION));
-                    $previewUrl = asset($dataset->activeRevision->latestFileChange->after_file_storage);
+                    $previewUrl = public_asset($dataset->activeRevision->latestFileChange->after_file_storage);
                 @endphp
             @else
                 @php
                     $extension = strtolower(pathinfo($dataset->file_original_name, PATHINFO_EXTENSION));
-                    $previewUrl = asset($dataset->file_storage);
+                    $previewUrl = public_asset($dataset->file_storage);
                 @endphp
             @endif
 
