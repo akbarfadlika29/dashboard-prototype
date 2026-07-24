@@ -20,14 +20,13 @@
         @if($extension == 'PDF')
 
             <iframe
-                src="{{ asset($file_path) }}"
+                src="{{ public_asset($file_path) }}"
                 class="w-full h-[650px] border rounded-lg">
             </iframe>
 
         @elseif(in_array($extension, ['JPG','JPEG','PNG']))
 
-            <img
-                src="{{ asset($file_path) }}"
+            <img src="{{ public_asset($file_path) }}"
                 class="max-w-full rounded-lg border mx-auto">
 
         @elseif(in_array($extension, ['XLS','XLSX']))
