@@ -54,6 +54,12 @@ class AdminApprovalController extends Controller
             'activeRevision.changes'
         ]);
 
+        if ($dataset->first_created == 'files') {
+            $datasetData = collect();
+
+            return view('admin.approval.show', compact('dataset', 'datasetData'));
+        }
+
         $datasetData = $dataset->data()
             ->latest()
             ->paginate(10);
@@ -150,6 +156,26 @@ class AdminApprovalController extends Controller
             403,
             'Revision tidak ditemukan'
         );
+
+        if ($dataset->first_created === 'files') {
+            $revision->update([
+                'status' => 'approved',
+                'approved_by' => auth()->id(),
+                'approved_at' => now(),
+            ]);
+
+            $dataset->update([
+                'file_storage' => $dataset->activeRevision->latestFileChange->after_file_storage,
+                'file_original_name' => $dataset->activeRevision->latestFileChange->after_file_original_name,
+                'file_mime' => $dataset->activeRevision->latestFileChange->after_file_mime,
+                'file_size' => $dataset->activeRevision->latestFileChange->after_file_size
+            ]);
+
+            return back()->with(
+                'success',
+                'Revision berhasil disetujui'
+            );
+        }
 
         DB::transaction(function () use (
             $dataset,

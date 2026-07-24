@@ -8,6 +8,7 @@ use App\Models\DatasetData;
 use App\Models\DatasetFilter;
 use App\Models\DatasetRevision;
 use App\Models\DatasetRevisionChange;
+use App\Models\DatasetFileRevisionChange;
 use App\Models\Kategori;
 use App\Models\Seksi;
 use Illuminate\Http\Request;
@@ -153,6 +154,15 @@ class AdminDatasetController extends Controller
     {
         $this->authorizeEditable($dataset);
 
+        if ($dataset->first_created === 'files') {
+
+            return view(
+                'admin.dataset.partials.edit-files',
+                compact('dataset')
+            );
+
+        }
+
         $kategori = Kategori::all();
 
         $seksi = auth()->user()->isAdminSeksi()
@@ -166,6 +176,21 @@ class AdminDatasetController extends Controller
         ));
     }
 
+    public function editFile(Dataset $dataset)
+    {
+        $this->authorizeEditable($dataset);
+
+        abort_if(
+            $dataset->first_created !== 'files',
+            404
+        );
+
+        return view(
+            'admin.dataset.partials.edit-files',
+            compact('dataset')
+        );
+    }
+
     /*
     |--------------------------------------------------------------------------
     | UPDATE DATASET
@@ -175,6 +200,15 @@ class AdminDatasetController extends Controller
     public function update(Request $request, Dataset $dataset)
     {
         $this->authorizeEditable($dataset);
+
+        if ($dataset->first_created === 'files') {
+
+            return $this->updateFileDataset(
+                $request,
+                $dataset
+            );
+
+        }
 
         $request->validate([
             'nama' => 'required',
@@ -318,6 +352,78 @@ class AdminDatasetController extends Controller
         return back()->with('success', 'Kolom berhasil diubah');
     }
 
+    public function updateFile(
+        Request $request,
+        Dataset $dataset
+    )
+    {
+        $this->authorizeEditable($dataset);
+
+        abort_if(
+            $dataset->first_created !== 'files',
+            404
+        );
+
+        $request->validate([
+            'file' => 'required|file|max:10240'
+        ]);
+
+        $file = $request->file('file');
+
+        $originalName = $file->getClientOriginalName();
+        $mime = $file->getMimeType();
+        $size = $file->getSize();
+
+        $newName = Str::uuid().'.'.$file->getClientOriginalExtension();
+
+        $directory = public_path('uploads/dataset');
+
+        if ($dataset->isDirectEdit()) {
+            // hapus file lama
+            $oldFile = public_path($dataset->file_storage);
+
+            if (file_exists($oldFile)) {
+                unlink($oldFile);
+            }
+
+            if (!file_exists($directory)) {
+                mkdir($directory, 0755, true);
+            }
+
+            $file->move($directory, $newName);
+
+            $dataset->update([
+                'file_storage' => 'uploads/dataset/'.$newName,
+                'file_original_name' => $originalName,
+                'file_mime' => $mime,
+                'file_size' => $size,
+            ]);
+
+            return redirect()
+                ->route('admin-dataset.show', $dataset)
+                ->with('success', 'File dataset berhasil diperbarui.');
+        }
+
+        $revision = $this->getOrCreateRevision($dataset);
+
+        $file->move($directory, $newName);
+        
+        DatasetFileRevisionChange::create([
+            'revision_id' => $revision->id,
+            'action' => 'update_file',
+            'after_file_storage' => 'uploads/dataset/'.$newName,
+            'after_file_original_name' => $originalName,
+            'after_file_mime' => $mime,
+            'after_file_size' => $size,
+        ]);
+
+        
+        return back()->with(
+            'success',
+            'Perubahan berhasil disimpan ke draft revision'
+        );
+    }
+
     public function destroyColumn(Dataset $dataset, $index)
     {
         // $this->ensureEditable($dataset);
@@ -355,16 +461,28 @@ class AdminDatasetController extends Controller
     */
 
     public function destroy(Dataset $dataset)
-    {
-        // $this->authorizeEditable($dataset);
+{
+    // $this->authorizeEditable($dataset);
 
-        abort_if(
-            $dataset->isApproved(),
-            403,
-            'Dataset approved tidak dapat dihapus langsung'
-        );
+    abort_if(
+        $dataset->isApproved(),
+        403,
+        'Dataset approved tidak dapat dihapus langsung'
+    );
 
-        $dataset->data()->delete();
+    /*
+    |--------------------------------------------------------------------------
+    | DATASET FILES
+    |--------------------------------------------------------------------------
+    */
+    if ($dataset->first_created === 'files') {
+
+        $file = public_path($dataset->file_storage);
+
+        if (file_exists($file) && is_file($file)) {
+            unlink($file);
+        }
+
         $dataset->filters()->delete();
         $dataset->delete();
 
@@ -372,6 +490,20 @@ class AdminDatasetController extends Controller
             ->route('dataset.index')
             ->with('success', 'Dataset berhasil dihapus');
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | DATASET MANUAL / IMPORT CSV
+    |--------------------------------------------------------------------------
+    */
+    $dataset->data()->delete();
+    $dataset->filters()->delete();
+    $dataset->delete();
+
+    return redirect()
+        ->route('dataset.index')
+        ->with('success', 'Dataset berhasil dihapus');
+}
 
     /*
     |--------------------------------------------------------------------------
@@ -582,7 +714,7 @@ class AdminDatasetController extends Controller
         abort_if(!$revision, 403, 'Revision tidak ditemukan');
 
         abort_if(
-            $revision->changes()->count() < 1,
+            ($revision->changes()->count() < 1 && $dataset->first_created !== 'files'),
             403,
             'Belum ada perubahan'
         );
