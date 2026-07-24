@@ -73,6 +73,12 @@ Route::middleware('auth')->group(function () {
         Route::put('/{dataset}', [AdminDatasetController::class, 'update'])
             ->name('dataset.update');
 
+        Route::get('/{dataset}/edit-file', [AdminDatasetController::class, 'editFile'])
+            ->name('dataset.files.edit');
+
+        Route::put('/{dataset}/update-file', [AdminDatasetController::class, 'updateFile'])
+            ->name('dataset.files.update');
+
         Route::delete('/{dataset}', [AdminDatasetController::class, 'destroy'])
             ->name('dataset.destroy');
 

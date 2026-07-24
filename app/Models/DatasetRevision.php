@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Dataset;
 use App\Models\DatasetRevisionChange;
+use App\Models\DatasetFileRevisionChange;
 use App\Models\User;
 
 class DatasetRevision extends Model
@@ -32,6 +33,17 @@ class DatasetRevision extends Model
     public function changes()
     {
         return $this->hasMany(DatasetRevisionChange::class, 'revision_id');
+    }
+
+    public function latestFileChange()
+    {
+        return $this->hasOne(DatasetFileRevisionChange::class, 'revision_id')
+            ->latestOfMany();
+    }
+
+    public function changeFiles()
+    {
+        return $this->hasMany(DatasetFileRevisionChange::class, 'revision_id');
     }
 
     public function creator()

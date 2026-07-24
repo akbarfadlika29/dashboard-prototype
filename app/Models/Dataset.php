@@ -32,6 +32,7 @@ class Dataset extends Model
         'approved_by',
         'approved_at',
         'count_approved',
+        'first_created',
         'file_storage',
         'file_original_name',
         'file_mime',
