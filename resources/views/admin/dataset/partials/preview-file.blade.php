@@ -17,14 +17,14 @@
 @if(in_array($ext,['pdf']))
 
     <iframe
-        src="{{ $file }}"
+        src="{{ public_asset($file) }}"
         class="w-full h-[900px] rounded-xl">
     </iframe>
 
 @elseif(in_array($ext,['jpg','jpeg','png','webp']))
 
     <img
-        src="{{ $file }}"
+        src="{{ public_asset($file) }}"
         class="rounded-xl w-full">
 
 @elseif(in_array($ext,['xlsx','xls']))
@@ -36,7 +36,7 @@
         <div class="mt-5">
 
             <a
-                href="{{ $file }}"
+                href="{{ public_asset($file) }}"
                 target="_blank"
                 class="px-5 py-2 rounded-xl bg-green-600 text-white">
 
