@@ -71,8 +71,8 @@
 
                 <a href="{{ route('admin.dataset.export.excel', [$dataset->slug ?? $dataset->id] + request()->query()) }}"
                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/90 hover:bg-emerald-600 text-white text-sm font-medium transition">
-                    <i class="fa-solid fa-file-excel"></i>
-                    Excel
+                    <i class="fa-solid fa-file-csv"></i>
+                    CSV
                 </a>
 
                 <a href="{{ route('admin.dashboard.kategori.show', $dataset->kategori_id) }}"

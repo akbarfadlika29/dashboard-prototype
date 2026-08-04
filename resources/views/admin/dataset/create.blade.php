@@ -6,20 +6,42 @@
 @section('content')
 <div class="max-w-5xl mx-auto space-y-6">
 
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 md:p-10">
         <div class="flex items-start justify-between gap-4 flex-col md:flex-row">
             <div>
                 <h1 class="text-2xl font-bold text-slate-800">Tambah Dataset</h1>
                 <p class="text-slate-500 mt-1">Lengkapi informasi, susun kolom, lalu simpan dataset.</p>
             </div>
-            <a href="{{ route('dataset.index') }}" class="px-4 py-2 rounded-xl border border-slate-300 text-sm hover:bg-slate-50">Kembali</a>
+            <a 
+                href="{{ route('dataset.index') }}" 
+                class="inline-flex items-center gap-2
+                    px-5 py-2.5 
+                    rounded-xl 
+                    border border-slate-300 
+                    bg-white 
+                    text-slate-700
+                    font-medium
+                    shadow-sm
+                    hover:bg-slate-50
+                    hover:border-slate-400
+                    transition-all duration-200">
+                    <svg 
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    <span>Kembali ke Daftar</span>
+                </a>
         </div>
     </div>
 
     <form method="POST" action="{{ route('dataset.store') }}" id="datasetForm">
         @csrf
 
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 md:p-10">
             <div class="grid grid-cols-3 gap-3 mb-8" id="stepIndicator">
                 <div class="step-pill active">1. Informasi</div>
                 <div class="step-pill">2. Kolom</div>
@@ -27,16 +49,50 @@
             </div>
 
             <div class="step-content" data-step="0">
-                <div class="grid md:grid-cols-2 gap-5">
+                <div class="grid md:grid-cols-2 gap-7">
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-medium mb-1">Nama Dataset <span class="text-red-500">*</span></label>
-                        <input type="text" name="nama" id="nama" class="w-full rounded-xl border-slate-300 focus:ring-emerald-500" placeholder="Contoh: Data Pernikahan 2026">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Nama Dataset <span class="text-red-500">*</span></label>
+                        <input type="text" name="nama" id="nama" 
+                            class="
+                                w-full
+                                border-2
+                                border-slate-300 
+                                rounded-2xl 
+                                px-5
+                                py-3.5
+                                
+                                text-slate-800
+                                
+                                placeholder:text-slate-400
+                                
+                                shadow-sm
+                                
+                                focus:border-emerald-500
+                                focus:ring-4
+                                focus:ring-emerald-100
+                                
+                                transition" 
+                            
+                            placeholder="Contoh: Data Pernikahan 2026">
                         <p class="text-xs text-red-500 mt-1 hidden" data-error="nama"></p>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium mb-1">Kategori <span class="text-red-500">*</span></label>
-                        <select name="kategori_id" id="kategori_id" class="w-full rounded-xl border-slate-300">
+                        <select name="kategori_id" id="kategori_id" 
+                            class="
+                                w-full
+                                border-2 
+                                border-slate-300
+                                rounded-2xl 
+                                px-5
+                                py-3.5
+                                bg-white
+                                shadow-sm
+                                focus:border-emerald-500
+                                focus:ring-4
+                                focus:ring-emerald-100
+                                transition">
                             <option value="">Pilih Kategori</option>
                             @foreach($kategori as $k)
                                 <option value="{{ $k->id }}">{{ $k->nama }}</option>
@@ -47,7 +103,20 @@
 
                     <div>
                         <label class="block text-sm font-medium mb-1">Seksi <span class="text-red-500">*</span></label>
-                        <select name="seksi_id" id="seksi_id" class="w-full rounded-xl border-slate-300">
+                        <select name="seksi_id" id="seksi_id" 
+                            class="
+                                w-full
+                                border-2 
+                                border-slate-300
+                                rounded-2xl 
+                                px-5
+                                py-3.5
+                                bg-white
+                                shadow-sm
+                                focus:border-emerald-500
+                                focus:ring-4
+                                focus:ring-emerald-100
+                                transition">
                             <option value="">Pilih Seksi</option>
                             @foreach($seksi as $s)
                                 <option value="{{ $s->id }}">{{ $s->nama }}</option>
@@ -58,7 +127,20 @@
 
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium mb-1">Deskripsi</label>
-                        <textarea name="deskripsi" rows="4" class="w-full rounded-xl border-slate-300" placeholder="Deskripsi singkat dataset..."></textarea>
+                        <textarea name="deskripsi" rows="4" 
+                            class="
+                                w-full
+                                border-2 
+                                border-slate-300
+                                rounded-2xl 
+                                px-5
+                                py-4
+                                resize-y
+                                shadow-sm
+                                focus:ring-4
+                                focus:ring-emerald-100
+                                focus:border-emerald-500
+                                transition" placeholder="Deskripsi singkat dataset..."></textarea>
                     </div>
                 </div>
             </div>
@@ -93,10 +175,65 @@
             </div>
 
             <div class="flex items-center justify-between pt-8 mt-8 border-t border-slate-200">
-                <button type="button" id="backBtn" onclick="prevStep()" class="px-5 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-50 hidden">Back</button>
+                <button type="button" id="backBtn" onclick="prevStep()" 
+                    class="
+                        inline-flex
+                        items-center
+                        gap-2
+                        px-5 
+                        py-3 
+                        rounded-xl 
+                        border 
+                        border-slate-300
+                        bg-white
+                        text-slate-700
+                        font-medium
+                        shadow-sm 
+                        hover:bg-slate-100
+                        hover:border-slate-400
+                        transition
+                        hidden">
+                        
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        <span>Kembali</span>
+                    </button>
                 <div class="ml-auto flex gap-2">
-                    <button type="button" id="nextBtn" onclick="nextStep()" class="px-5 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700">Next</button>
-                    <button type="submit" id="submitBtn" class="px-5 py-2.5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 hidden">Simpan Dataset</button>
+                    <button type="button" id="nextBtn" onclick="nextStep()" 
+                        class="
+                            inline-flex
+                            items-center
+                            gap-2
+                            px-6
+                            py-3 
+                            rounded-xl 
+                            text-white
+                            bg-blue-600 
+                            font-semibold
+                            shadow-md
+                            hover:bg-blue-700
+                            hover:shadow-lg
+                            transition">Next →</button>
+                    <button type="submit" id="submitBtn" 
+                        class="
+                            inline-flex
+                            items-center
+                            gap-2
+                            px-6 
+                            py-3 
+                            rounded-xl 
+                            bg-emerald-600 
+                            font-semibold
+                            text-white 
+                            shadow-md
+                            hover:bg-emerald-700
+                            hover:shadow-xl
+                            transition">Simpan Dataset</button>
                 </div>
             </div>
         </div>
@@ -104,8 +241,43 @@
 </div>
 
 <style>
-.step-pill{padding:.75rem 1rem;border-radius:1rem;background:#f1f5f9;color:#64748b;font-size:.875rem;font-weight:600;text-align:center}
-.step-pill.active{background:#059669;color:white}
+.step-pill{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:1rem 1.25rem;
+
+    border-radius:16px;
+
+    background:#f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    font-weight:600;
+
+    color:#64748b;
+
+    transition:.25s;
+    
+    min-height:64px;
+}
+
+.step-pill.active{
+    background:linear-gradient(
+        135deg,
+        #059669,
+        #10b981
+    );
+
+    color:white;
+
+    border-color:#10b981;
+
+    box-shadow:0 10px 20px rgba(16,185,129,.25);
+
+    transform:translateY(-2px);
+}
 </style>
 
 <script>
