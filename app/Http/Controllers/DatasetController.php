@@ -15,6 +15,10 @@ class DatasetController extends Controller
         // Hanya dataset yang sudah approved yang boleh dilihat publik
         abort_if($dataset->status !== 'approved', 404);
 
+        if ($dataset->first_created === 'files') {
+            return view('admin.dashboard.dataset.show_files', compact('dataset'));
+        }
+
         $perPage = request()->get('per_page', 10);
 
         $filters = $dataset->filters;
