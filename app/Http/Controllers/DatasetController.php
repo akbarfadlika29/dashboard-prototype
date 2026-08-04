@@ -184,7 +184,7 @@ class DatasetController extends Controller
 
         $rows = $query->latest()->get();
 
-        $pdf = Pdf::loadView('public.dataset.export-pdf', [
+        $pdf = Pdf::loadView('admin.dashboard.dataset.export-pdf', [
             'dataset' => $dataset,
             'rows' => $rows,
         ])->setPaper('a4', 'landscape');
