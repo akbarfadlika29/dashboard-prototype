@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class AdminDatasetController extends Controller
 {
@@ -899,12 +900,26 @@ class AdminDatasetController extends Controller
             $types[$index] = $this->detectColumnType($columnValues);
         }
 
+        $data = collect(array_slice($rows,1))
+            ->map(function($row) use($headers){
+
+                return array_pad($row, count($headers), '');
+
+            });
+
+        $kategoriNama = Kategori::find($request->kategori_id)?->nama;
+        $seksiNama = Seksi::find($request->seksi_id)?->nama;
+
         return view('admin.dataset.import_preview', [
-            'data'      => array_slice($rows, 0, 10),
-            'headers'   => $headers,
-            'types'     => $types,
-            'request'   => $request->except('file'),
-            'file_path' => $path,
+            'data'=>$data,
+            'headers'=>$headers,
+            'types'=>$types,
+            'request'=>$request->except('file'),
+            'file_path'=>$path,
+            'totalRows' => count($rows) - 1,
+            'totalColumns' => count($headers),
+            'kategoriNama' => $kategoriNama,
+            'seksiNama' => $seksiNama,
         ]);
     }
 
