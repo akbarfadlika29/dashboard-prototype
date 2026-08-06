@@ -65,7 +65,7 @@ Route::middleware('auth')->group(function () {
             ->name('dataset.importFilesStore');
 
         Route::get('/{dataset}', [AdminDatasetController::class, 'show'])
-            ->name('admin-dataset.show');
+            ->name('dataset.show.admin');
 
         Route::get('/{dataset}/edit', [AdminDatasetController::class, 'edit'])
             ->name('dataset.edit');
