@@ -314,7 +314,7 @@
 
                             <div class="flex items-center justify-center">
 
-                                <a href="{{ route('admin-dataset.show', $item) }}"
+                                <a href="{{ route('dataset.show.admin', $item) }}"
                                    class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition">
 
                                     <i class="fa-solid fa-eye"></i>

@@ -238,7 +238,7 @@ class AdminDatasetController extends Controller
             ]);
 
             return redirect()
-                ->route('admin-dataset.show', $dataset)
+                ->route('dataset.show.admin', $dataset)
                 ->with('success', 'Dataset berhasil diupdate');
         }
 
@@ -273,7 +273,7 @@ class AdminDatasetController extends Controller
         ]);
 
         return redirect()
-            ->route('admin-dataset.show', $dataset)
+            ->route('dataset.show.admin', $dataset)
             ->with('success', 'Perubahan disimpan ke draft revision');
     }
 
@@ -401,7 +401,7 @@ class AdminDatasetController extends Controller
             ]);
 
             return redirect()
-                ->route('admin-dataset.show', $dataset)
+                ->route('dataset.show.admin', $dataset)
                 ->with('success', 'File dataset berhasil diperbarui.');
         }
 
