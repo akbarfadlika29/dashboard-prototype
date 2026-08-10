@@ -122,6 +122,8 @@ class AdminDatasetController extends Controller
 
         $displayData = $dataset->displayData();
 
+        $revision = $dataset->activeRevision;
+
         $page = request()->get('page', 1);
         $perPage = 10;
 
@@ -138,10 +140,37 @@ class AdminDatasetController extends Controller
 
         // return response()->json($dataset, 200, [], JSON_PRETTY_PRINT);
 
+        $createCount = 0;
+        $updateCount = 0;
+        $deleteCount = 0;
+        $datasetUpdate = 0;
+
+        if ($revision) {
+            $createCount = $revision->changes
+                ->where('action', 'create_row')
+                ->count();
+
+            $updateCount = $revision->changes
+                ->where('action', 'update_row')
+                ->count();
+
+            $deleteCount = $revision->changes
+                ->where('action', 'delete_row')
+                ->count();
+
+            $datasetUpdate = $revision->changes
+                ->where('action', 'update_dataset')
+                ->count();
+        }
+
         return view('admin.dataset.show', compact(
             'dataset',
             'data',
-            'displayData'
+            'revision',
+            'createCount',
+            'updateCount',
+            'deleteCount',
+            'datasetUpdate'
         ));
     }
 

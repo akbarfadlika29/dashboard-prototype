@@ -59,134 +59,250 @@
 
     <div class="max-w-7xl mx-auto space-y-6">
 
-        {{-- HEADER --}}
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
-            
-            <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6">
-                
-                <div>
-                    
-                    <div class="flex items-center gap-3 flex-wrap">
+        {{-- ================= HEADER ================= --}}
+        <div class="bg-gradient-to-r from-white to-slate-50 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
 
-                        <h1 class="text-3xl font-bold text-slate-800">
-                            {{ $dataset->nama }}
-                        </h1>
+            <div class="p-8">
 
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $status['class'] }}">
-                            {{ $status['label'] }}
-                        </span>
+                <div class="flex flex-col xl:flex-row xl:justify-between gap-8">
+
+                    <div class="flex-1">
+
+                        <div class="flex flex-wrap items-center gap-3">
+
+                            <h1 class="text-3xl font-bold text-slate-800">
+                                {{ $dataset->nama }}
+                            </h1>
+
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $status['class'] }}">
+                                {{ $status['label'] }}
+                            </span>
+
+                        </div>
+
+                        @if($dataset->deskripsi)
+
+                            <p class="mt-4 max-w-4xl text-slate-600 leading-relaxed">
+                                {{ $dataset->deskripsi }}
+                            </p>
+
+                        @endif
+
+                        <div class="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-sm">
+
+                            <div>
+                                <div class="text-slate-400">
+                                    Kategori
+                                </div>
+
+                                <div class="font-semibold text-slate-700">
+                                    {{ $dataset->kategori->nama ?? '-' }}
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="text-slate-400">
+                                    Seksi
+                                </div>
+
+                                <div class="font-semibold text-slate-700">
+                                    {{ $dataset->seksi->nama ?? '-' }}
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="text-slate-400">
+                                    Dibuat
+                                </div>
+
+                                <div class="font-semibold text-slate-700">
+                                    {{ $dataset->created_at->format('d M Y H:i') }}
+                                </div>
+                            </div>
+
+                        </div>
 
                     </div>
-                    
-                    @if($dataset->deskripsi)
-                    <p class="text-slate-500 mt-3 max-w-4xl leading-relaxed">
-                        {{ $dataset->deskripsi }}
-                    </p>
-                    @endif
-                    
-                    <div class="mt-5 flex flex-wrap items-center gap-5 text-sm text-slate-500">
-                        
-                        <div>
-                            <span class="font-medium text-slate-700">
-                                Kategori:
-                            </span>
-                            
-                            {{ $dataset->kategori->nama ?? '-' }}
-                        </div>
-                        
-                        <div>
-                            <span class="font-medium text-slate-700">
-                                Seksi:
-                            </span>
-                            
-                            {{ $dataset->seksi->nama ?? '-' }}
-                        </div>
-                        
-                        <div>
-                            <span class="font-medium text-slate-700">
-                                Dibuat:
-                            </span>
-                            
-                            {{ $dataset->created_at->format('d M Y H:i') }}
-                        </div>
-                        
+
+                    {{-- ACTION --}}
+                    <div class="flex flex-wrap gap-3 items-start">
+
+                        {{-- Submit --}}
+                        @if ($canEdit && $dataset->count_approved === 0)
+
+                            <form method="POST"
+                                action="{{ route('dataset.submit', $dataset) }}"
+                                onsubmit="submitButton(this)">
+
+                                @csrf
+
+                                <button
+                                    type="submit"
+                                    class="submit-btn inline-flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 font-medium transition disabled:opacity-60 disabled:cursor-not-allowed">
+
+                                    <svg class="submit-spinner hidden animate-spin h-5 w-5"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24">
+
+                                        <circle
+                                            class="opacity-25"
+                                            cx="12"
+                                            cy="12"
+                                            r="10"
+                                            stroke="currentColor"
+                                            stroke-width="4"/>
+
+                                        <path
+                                            class="opacity-75"
+                                            fill="currentColor"
+                                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+
+                                    </svg>
+
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="submit-icon w-5 h-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor">
+
+                                        <path stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M4 4v16h16"/>
+
+                                    </svg>
+
+                                    <span>
+
+                                        @if($dataset->status=='draft')
+                                            Ajukan Dataset
+                                        @else
+                                            Ajukan Kembali
+                                        @endif
+
+                                    </span>
+
+                                </button>
+
+                            </form>
+
+                        @endif
+
+                        {{-- Delete --}}
+                        @if($canEdit && ($dataset->status=='draft' || $dataset->status=='rejected'))
+
+                            <form method="POST"
+                                action="{{ route('dataset.destroy',$dataset) }}"
+                                onsubmit="return confirmDelete(event,this)">
+
+                                @csrf
+                                @method('DELETE')
+
+                                <button
+                                    type="submit"
+                                    class="delete-btn inline-flex items-center gap-2 rounded-xl border border-red-300 text-red-600 hover:bg-red-50 px-5 py-3 font-medium transition disabled:opacity-60">
+
+                                    <svg class="delete-spinner hidden animate-spin h-5 w-5"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24">
+
+                                        <circle
+                                            cx="12"
+                                            cy="12"
+                                            r="10"
+                                            stroke="currentColor"
+                                            stroke-width="4"
+                                            class="opacity-25"/>
+
+                                        <path
+                                            fill="currentColor"
+                                            class="opacity-75"
+                                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+
+                                    </svg>
+
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="delete-icon w-5 h-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor">
+
+                                        <path stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M19 7L5 7M10 11v6m4-6v6M6 7l1-2h10l1 2"/>
+
+                                    </svg>
+
+                                    Hapus Dataset
+
+                                </button>
+
+                            </form>
+
+                        @endif
+
                     </div>
-                    
-                </div>
-
-                {{-- ACTIONS --}}
-                <div class="flex flex-wrap gap-2">
-                    
-                    {{-- SUBMIT --}}
-                    @if ($canEdit && $dataset->count_approved === 0)
-                    <form method="POST" action="{{ route('dataset.submit', $dataset) }}">
-                        @csrf
-                        <button class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition">
-                            @if ($dataset->status === 'draft')
-                            Ajukan Dataset
-                            @elseif ($dataset->status === 'rejected')
-                            Ajukan Kembali Dataset
-                            @endif
-                        </button>
-                    </form>
-                    @endif
-                    @if(
-                        ($canEdit &&
-                        $dataset->hasDraftRevision() &&
-                        $totalChanges > 0 &&
-                        $dataset->count_approved > 0 &&
-                        $dataset->activeRevision->status === 'draft')
-
-                        ||
-
-                        ($canEdit &&
-                        $dataset->hasDraftRevision() &&
-                        $dataset->count_approved > 0 &&
-                        $dataset->activeRevision->status === 'draft' &&
-                        $dataset->first_created === 'files')
-                    )
-
-                        <form method="POST"
-                            action="{{ route('dataset.submit', $dataset) }}">
-
-                            @csrf
-
-                            <button
-                            class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition">
-                            
-                            Ajukan Revision
-                            @if($dataset->first_created !== 'files')
-                                ({{ $totalChanges }} Perubahan)
-                            @endif
-                            
-                        </button>
-                        
-                    </form>
-                    
-                    @endif
-                    
-                    {{-- DELETE --}}
-                    @if($canEdit && ($dataset->status === 'draft' || $dataset->status === 'rejected'))
-                    
-                    <form method="POST"
-                    action="{{ route('dataset.destroy', $dataset) }}"
-                    onsubmit="return confirm('Yakin ingin menghapus dataset ini?')">
-                    
-                            @csrf
-                            @method('DELETE')
-                            
-                            <button class="px-5 py-2.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition">
-                                Hapus Dataset
-                            </button>
-
-                        </form>
-
-                    @endif
 
                 </div>
 
             </div>
-            
+
+            {{-- Statistic --}}
+            <div class="grid grid-cols-2 lg:grid-cols-4 border-t border-slate-200 bg-slate-50">
+
+                <div class="p-5">
+
+                    <div class="text-sm text-slate-500">
+                        Jumlah Data
+                    </div>
+
+                    <div class="mt-1 text-3xl font-bold text-slate-800">
+                        {{ $displayData->count() }}
+                    </div>
+
+                </div>
+
+                <div class="p-5 border-l border-slate-200">
+
+                    <div class="text-sm text-slate-500">
+                        Jumlah Kolom
+                    </div>
+
+                    <div class="mt-1 text-3xl font-bold text-slate-800">
+                        {{ count($columns) }}
+                    </div>
+
+                </div>
+
+                <div class="p-5 border-l border-slate-200">
+
+                    <div class="text-sm text-slate-500">
+                        Filter
+                    </div>
+
+                    <div class="mt-1 text-3xl font-bold text-slate-800">
+                        {{ $dataset->filters->count() }}
+                    </div>
+
+                </div>
+
+                <div class="p-5 border-l border-slate-200">
+
+                    <div class="text-sm text-slate-500">
+                        Revision
+                    </div>
+
+                    <div class="mt-1 text-3xl font-bold text-slate-800">
+                        {{ $revision ? $totalChanges : 0 }}
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
         
         @if($dataset->first_created === 'files')
@@ -574,6 +690,7 @@
         </div>
 
         @endif
+        
         {{-- STRUKTUR KOLOM --}}
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
 
@@ -1000,4 +1117,44 @@
 
     </div>
 @endif
+
+@push('scripts')
+<script>
+
+function submitButton(form)
+{
+    const button = form.querySelector('button');
+
+    button.disabled = true;
+
+    button.querySelector('.submit-spinner').classList.remove('hidden');
+
+    button.querySelector('.submit-icon').classList.add('hidden');
+}
+
+function confirmDelete(e,form)
+{
+    e.preventDefault();
+
+    if(!confirm('Yakin ingin menghapus dataset ini?'))
+    {
+        return false;
+    }
+
+    const button=form.querySelector('button');
+
+    button.disabled=true;
+
+    button.querySelector('.delete-spinner').classList.remove('hidden');
+
+    button.querySelector('.delete-icon').classList.add('hidden');
+
+    form.submit();
+
+    return false;
+}
+
+</script>
+@endpush
+
 @endsection

@@ -159,6 +159,9 @@ Route::middleware('auth')->group(function () {
 
         Route::delete('{dataset}/filters/{filter}', [AdminDatasetController::class, 'destroyFilter'])
             ->name('filters.destroy');
+
+        Route::get('/dataset/{dataset}/columns/{index}/edit', [AdminDatasetController::class, 'editColumn'])->name('columns.edit');
+        Route::get('/dataset/{dataset}/rows/{row}/edit', [AdminDatasetController::class, 'editRow'])->name('rows.edit');
     });
 
     Route::middleware(['role:superadmin,kepala_seksi'])
