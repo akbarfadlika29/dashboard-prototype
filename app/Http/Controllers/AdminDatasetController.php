@@ -122,26 +122,43 @@ class AdminDatasetController extends Controller
 
         $displayData = $dataset->displayData();
 
-        $page = request()->get('page', 1);
-        $perPage = 10;
+        $revision = $dataset->activeRevision;
 
-        $data = new LengthAwarePaginator(
-            $displayData->forPage($page, $perPage),
-            $displayData->count(),
-            $perPage,
-            $page,
-            [
-                'path' => request()->url(),
-                'query' => request()->query(),
-            ]
-        );
+        $data = $displayData;
 
         // return response()->json($dataset, 200, [], JSON_PRETTY_PRINT);
+
+        $createCount = 0;
+        $updateCount = 0;
+        $deleteCount = 0;
+        $datasetUpdate = 0;
+
+        if ($revision) {
+            $createCount = $revision->changes
+                ->where('action', 'create_row')
+                ->count();
+
+            $updateCount = $revision->changes
+                ->where('action', 'update_row')
+                ->count();
+
+            $deleteCount = $revision->changes
+                ->where('action', 'delete_row')
+                ->count();
+
+            $datasetUpdate = $revision->changes
+                ->where('action', 'update_dataset')
+                ->count();
+        }
 
         return view('admin.dataset.show', compact(
             'dataset',
             'data',
-            'displayData'
+            'revision',
+            'createCount',
+            'updateCount',
+            'deleteCount',
+            'datasetUpdate'
         ));
     }
 
