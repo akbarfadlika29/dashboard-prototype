@@ -885,6 +885,41 @@ div.dt-scroll-head {
 
                         @endif
 
+                        @if(
+                            ($canEdit &&
+                            $dataset->hasDraftRevision() &&
+                            $totalChanges > 0 &&
+                            $dataset->count_approved > 0 &&
+                            $dataset->activeRevision->status === 'draft')
+
+                            ||
+
+                            ($canEdit &&
+                            $dataset->hasDraftRevision() &&
+                            $dataset->count_approved > 0 &&
+                            $dataset->activeRevision->status === 'draft' &&
+                            $dataset->first_created === 'files')
+                        )
+
+                            <form method="POST"
+                                action="{{ route('dataset.submit', $dataset) }}">
+
+                                @csrf
+
+                                <button
+                                class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition">
+                                
+                                Ajukan Revision
+                                @if($dataset->first_created !== 'files')
+                                    ({{ $totalChanges }} Perubahan)
+                                @endif
+                                
+                            </button>
+                            
+                        </form>
+                        
+                        @endif
+
                         {{-- Delete --}}
                         @if($canEdit && ($dataset->status=='draft' || $dataset->status=='rejected'))
 
@@ -2276,7 +2311,7 @@ div.dt-scroll-head {
                                                             hover:bg-amber-100"
                                                         title="Edit data"
                                                         data-row-id="{{ $row->id }}"
-                                                        onclick="openEditDataModal({{ $row->id }})">
+                                                        onclick="openEditDataModal({{ Js::from($row) }})">
 
                                                         <i class="fa-solid fa-pen-to-square"></i>
 
@@ -2920,401 +2955,713 @@ div.dt-scroll-head {
     </div>
 @endif
 
-
 @push('scripts')
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 7px;
+        height: 7px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f8fafc;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 999px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 #f8fafc;
+    }
+</style>
 
 <script>
 
-/* =========================================================
-   DATASET ROW DATA
-   ========================================================= */
+    /*
+    |--------------------------------------------------------------------------
+    | DATA KOLOM
+    |--------------------------------------------------------------------------
+    */
 
-window.datasetRows = @json(
-    $data->map(function ($row) {
-        return [
-            'id'   => $row->id,
-            'data' => $row->data_json ?? [],
-        ];
-    })->values()
-);
+    const datasetColumns = @json($schema);
+
+    /*
+    |--------------------------------------------------------------------------
+    | MODAL EDIT KOLOM
+    |--------------------------------------------------------------------------
+    */
+
+    const columnEditModal = document.getElementById('columnEditModal');
+    const columnEditForm = document.getElementById('columnEditForm');
+    const columnEditLabel = document.getElementById('columnEditLabel');
+    const columnEditCurrentName = document.getElementById('columnEditCurrentName');
+
+    const columnEditSubmitButton =
+        document.getElementById('columnEditSubmitButton');
+
+    const columnEditSpinner =
+        document.getElementById('columnEditSpinner');
+
+    const columnEditSubmitText =
+        document.getElementById('columnEditSubmitText');
 
 
-/* =========================================================
-   DATATABLE
-   ========================================================= */
+    function openColumnEditModal(index)
+    {
+        const column = datasetColumns[index];
 
-document.addEventListener('DOMContentLoaded', function () {
+        if (!column) {
+            return;
+        }
 
-    $(function () {
+        const name = typeof column === 'object'
+            ? (column.name ?? '')
+            : column;
 
-        $('#datasetDataTable').DataTable({
+        /*
+        |--------------------------------------------------------------------------
+        | Set informasi kolom
+        |--------------------------------------------------------------------------
+        */
 
-            pageLength: 25,
+        columnEditCurrentName.textContent = name;
 
-            lengthMenu: [
-                [10, 25, 50, 100, -1],
-                [10, 25, 50, 100, "Semua"]
-            ],
+        columnEditLabel.value = name;
 
-            scrollY: '420px',
+        /*
+        |--------------------------------------------------------------------------
+        | Generate action URL
+        |--------------------------------------------------------------------------
+        */
 
-            scrollX: true,
+        const updateUrl =
+            "{{ route('columns.update', [$dataset, '__INDEX__']) }}"
+                .replace('__INDEX__', index);
 
-            scrollCollapse: true,
+        columnEditForm.action = updateUrl;
 
-            fixedHeader: true,
 
-            autoWidth: false,
+        /*
+        |--------------------------------------------------------------------------
+        | Reset button
+        |--------------------------------------------------------------------------
+        */
 
-            deferRender: true,
+        columnEditSubmitButton.disabled = false;
 
-            stateSave: true,
+        columnEditSpinner.classList.add('hidden');
 
-            order: [],
+        columnEditSubmitText.textContent = 'Simpan Perubahan';
 
-            language: {
 
-                search: "",
+        /*
+        |--------------------------------------------------------------------------
+        | Show modal
+        |--------------------------------------------------------------------------
+        */
 
-                searchPlaceholder: "Cari data...",
+        columnEditModal.classList.remove('hidden');
 
-                lengthMenu: "Tampilkan _MENU_ data",
+        document.body.classList.add('overflow-hidden');
 
-                info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
 
-                infoEmpty: "Tidak ada data",
+        /*
+        |--------------------------------------------------------------------------
+        | Focus input
+        |--------------------------------------------------------------------------
+        */
 
-                zeroRecords: "Data tidak ditemukan",
+        setTimeout(() => {
 
-                emptyTable: "Belum ada data dataset",
+            columnEditLabel.focus();
 
-                paginate: {
+            columnEditLabel.select();
 
-                    previous: "←",
+        }, 100);
+    }
 
-                    next: "→"
+
+    function closeColumnEditModal()
+    {
+        columnEditModal.classList.add('hidden');
+
+        document.body.classList.remove('overflow-hidden');
+
+        columnEditForm.reset();
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUBMIT EDIT
+    |--------------------------------------------------------------------------
+    */
+
+    columnEditForm?.addEventListener('submit', function () {
+
+        columnEditSubmitButton.disabled = true;
+
+        columnEditSpinner.classList.remove('hidden');
+
+        columnEditSubmitText.textContent = 'Menyimpan...';
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | MODAL DELETE KOLOM
+    |--------------------------------------------------------------------------
+    */
+
+    const columnDeleteModal =
+        document.getElementById('columnDeleteModal');
+
+    const columnDeleteForm =
+        document.getElementById('columnDeleteForm');
+
+    const columnDeleteName =
+        document.getElementById('columnDeleteName');
+
+    const columnDeleteSubmitButton =
+        document.getElementById('columnDeleteSubmitButton');
+
+    const columnDeleteSpinner =
+        document.getElementById('columnDeleteSpinner');
+
+    const columnDeleteSubmitText =
+        document.getElementById('columnDeleteSubmitText');
+
+
+    function openColumnDeleteModal(index)
+    {
+        const column = datasetColumns[index];
+
+        if (!column) {
+            return;
+        }
+
+        const name = typeof column === 'object'
+            ? (column.name ?? '')
+            : column;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Set column name
+        |--------------------------------------------------------------------------
+        */
+
+        columnDeleteName.textContent = name;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Generate delete URL
+        |--------------------------------------------------------------------------
+        */
+
+        const deleteUrl =
+            "{{ route('columns.destroy', [$dataset, '__INDEX__']) }}"
+                .replace('__INDEX__', index);
+
+        columnDeleteForm.action = deleteUrl;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reset button
+        |--------------------------------------------------------------------------
+        */
+
+        columnDeleteSubmitButton.disabled = false;
+
+        columnDeleteSpinner.classList.add('hidden');
+
+        columnDeleteSubmitText.textContent = 'Ya, Hapus Kolom';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Show modal
+        |--------------------------------------------------------------------------
+        */
+
+        columnDeleteModal.classList.remove('hidden');
+
+        document.body.classList.add('overflow-hidden');
+    }
+
+
+    function closeColumnDeleteModal()
+    {
+        columnDeleteModal.classList.add('hidden');
+
+        document.body.classList.remove('overflow-hidden');
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUBMIT DELETE
+    |--------------------------------------------------------------------------
+    */
+
+    columnDeleteForm?.addEventListener('submit', function () {
+
+        columnDeleteSubmitButton.disabled = true;
+
+        columnDeleteSpinner.classList.remove('hidden');
+
+        columnDeleteSubmitText.textContent = 'Menghapus...';
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ESCAPE KEY
+    |--------------------------------------------------------------------------
+    */
+
+    document.addEventListener('keydown', function (event) {
+
+        if (event.key !== 'Escape') {
+            return;
+        }
+
+        if (!columnEditModal.classList.contains('hidden')) {
+            closeColumnEditModal();
+        }
+
+        if (!columnDeleteModal.classList.contains('hidden')) {
+            closeColumnDeleteModal();
+        }
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUBMIT DATASET
+    |--------------------------------------------------------------------------
+    */
+
+    function submitButton(form)
+    {
+        const button = form.querySelector('button');
+
+        button.disabled = true;
+
+        button.querySelector('.submit-spinner').classList.remove('hidden');
+
+        button.querySelector('.submit-icon').classList.add('hidden');
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DELETE DATASET
+    |--------------------------------------------------------------------------
+    */
+
+    function confirmDelete(e, form)
+    {
+        e.preventDefault();
+
+        if (!confirm('Yakin ingin menghapus dataset ini?')) {
+            return false;
+        }
+
+        const button = form.querySelector('button');
+
+        button.disabled = true;
+
+        button.querySelector('.delete-spinner').classList.remove('hidden');
+
+        button.querySelector('.delete-icon').classList.add('hidden');
+
+        form.submit();
+
+        return false;
+    }
+
+    /* =========================================================
+    DATASET ROW DATA
+    ========================================================= */
+
+
+    /* =========================================================
+    DATATABLE
+    ========================================================= */
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        $(function () {
+
+            $('#datasetDataTable').DataTable({
+
+                pageLength: 25,
+
+                lengthMenu: [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "Semua"]
+                ],
+
+                scrollY: '420px',
+
+                scrollX: true,
+
+                scrollCollapse: true,
+
+                fixedHeader: true,
+
+                autoWidth: false,
+
+                deferRender: true,
+
+                stateSave: true,
+
+                order: [],
+
+                language: {
+
+                    search: "",
+
+                    searchPlaceholder: "Cari data...",
+
+                    lengthMenu: "Tampilkan _MENU_ data",
+
+                    info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+
+                    infoEmpty: "Tidak ada data",
+
+                    zeroRecords: "Data tidak ditemukan",
+
+                    emptyTable: "Belum ada data dataset",
+
+                    paginate: {
+
+                        previous: "←",
+
+                        next: "→"
+
+                    }
+
+                },
+
+                columnDefs: [
+
+                    {
+                        targets: -1,
+
+                        orderable: false,
+
+                        searchable: false
+                    }
+
+                ],
+
+                initComplete: function () {
+
+                    $('.dataTables_filter label').prepend(
+                        '<i class="fa-solid fa-magnifying-glass text-slate-400 mr-2"></i>'
+                    );
 
                 }
 
-            },
-
-            columnDefs: [
-
-                {
-                    targets: -1,
-
-                    orderable: false,
-
-                    searchable: false
-                }
-
-            ],
-
-            initComplete: function () {
-
-                $('.dataTables_filter label').prepend(
-                    '<i class="fa-solid fa-magnifying-glass text-slate-400 mr-2"></i>'
-                );
-
-            }
+            });
 
         });
 
     });
 
-});
 
+    /* =========================================================
+    ADD DATA MODAL
+    ========================================================= */
 
-/* =========================================================
-   ADD DATA MODAL
-   ========================================================= */
+    function openAddDataModal()
+    {
 
-function openAddDataModal()
-{
+        const modal =
+            document.getElementById('addDataModal');
 
-    const modal =
-        document.getElementById('addDataModal');
+        if (!modal) return;
 
-    if (!modal) return;
+        modal.classList.remove('hidden');
 
-    modal.classList.remove('hidden');
+        modal.classList.add('flex');
 
-    modal.classList.add('flex');
-
-    document.body.classList.add('overflow-hidden');
-
-}
-
-
-function closeAddDataModal()
-{
-
-    const modal =
-        document.getElementById('addDataModal');
-
-    if (!modal) return;
-
-    modal.classList.add('hidden');
-
-    modal.classList.remove('flex');
-
-    document.body.classList.remove('overflow-hidden');
-
-}
-
-
-/* =========================================================
-   EDIT DATA MODAL
-   ========================================================= */
-
-function openEditDataModal(rowId)
-{
-
-    const modal =
-        document.getElementById('editDataModal');
-
-    const form =
-        document.getElementById('editDataForm');
-
-    if (!modal || !form) return;
-
-
-    const row =
-        window.datasetRows[rowId];
-
-    if (!row) {
-
-        console.error(
-            'Data row tidak ditemukan:',
-            rowId
-        );
-
-        return;
+        document.body.classList.add('overflow-hidden');
 
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Set form action
-    |--------------------------------------------------------------------------
-    */
+    function closeAddDataModal()
+    {
 
-    form.action =
-        "{{ url('/admin-dataset') }}"
-        + "/{{ $dataset->id }}"
-        + "/rows/"
-        + rowId;
+        const modal =
+            document.getElementById('addDataModal');
 
+        if (!modal) return;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Populate field
-    |--------------------------------------------------------------------------
-    */
+        modal.classList.add('hidden');
 
-    form.querySelectorAll(
-        '[data-field]'
-    ).forEach(function (input) {
+        modal.classList.remove('flex');
 
-        const field =
-            input.dataset.field;
-
-        input.value =
-            row[field] ?? '';
-
-    });
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Show modal
-    |--------------------------------------------------------------------------
-    */
-
-    modal.classList.remove('hidden');
-
-    modal.classList.add('flex');
-
-    document.body.classList.add('overflow-hidden');
-
-}
-
-
-function closeEditDataModal()
-{
-
-    const modal =
-        document.getElementById('editDataModal');
-
-    if (!modal) return;
-
-    modal.classList.add('hidden');
-
-    modal.classList.remove('flex');
-
-    document.body.classList.remove('overflow-hidden');
-
-}
-
-
-/* =========================================================
-   DELETE DATA MODAL
-   ========================================================= */
-
-function openDeleteDataModal(rowId)
-{
-
-    const modal =
-        document.getElementById('deleteDataModal');
-
-    const form =
-        document.getElementById('deleteDataForm');
-
-    if (!modal || !form) return;
-
-
-    form.action =
-        "{{ url('/admin-dataset') }}"
-        + "/{{ $dataset->id }}"
-        + "/rows/"
-        + rowId;
-
-
-    modal.classList.remove('hidden');
-
-    modal.classList.add('flex');
-
-    document.body.classList.add('overflow-hidden');
-
-}
-
-
-function closeDeleteDataModal()
-{
-
-    const modal =
-        document.getElementById('deleteDataModal');
-
-    if (!modal) return;
-
-    modal.classList.add('hidden');
-
-    modal.classList.remove('flex');
-
-    document.body.classList.remove('overflow-hidden');
-
-}
-
-
-/* =========================================================
-   ESC KEY
-   ========================================================= */
-
-document.addEventListener(
-    'keydown',
-    function (event) {
-
-        if (event.key !== 'Escape') return;
-
-
-        closeAddDataModal();
-
-        closeEditDataModal();
-
-        closeDeleteDataModal();
+        document.body.classList.remove('overflow-hidden');
 
     }
-);
 
 
-/* =========================================================
-   EXISTING DATASET ACTION
-   ========================================================= */
+    /* =========================================================
+    EDIT DATA MODAL
+    ========================================================= */
 
-function submitButton(form)
-{
+    function openEditDataModal(row)
+    {
+        const modal =
+            document.getElementById('editDataModal');
 
-    const button =
-        form.querySelector('button');
-
-    if (!button) return;
-
-
-    button.disabled = true;
+        const form =
+            document.getElementById('editDataForm');
 
 
-    const spinner =
-        button.querySelector('.submit-spinner');
+        /*
+        |--------------------------------------------------------------------------
+        | Validasi modal & form
+        |--------------------------------------------------------------------------
+        */
 
-    const icon =
-        button.querySelector('.submit-icon');
+        if (!modal || !form) {
 
+            console.error(
+                'Modal edit data tidak ditemukan.'
+            );
 
-    if (spinner) {
-
-        spinner.classList.remove('hidden');
-
-    }
-
-
-    if (icon) {
-
-        icon.classList.add('hidden');
-
-    }
-
-}
+            return;
+        }
 
 
-function confirmDelete(e, form)
-{
+        /*
+        |--------------------------------------------------------------------------
+        | Validasi row
+        |--------------------------------------------------------------------------
+        */
 
-    e.preventDefault();
+        if (!row || !row.id) {
+
+            console.error(
+                'Data row tidak valid:',
+                row
+            );
+
+            return;
+        }
 
 
-    if (!confirm(
-        'Yakin ingin menghapus dataset ini?'
-    )) {
+        /*
+        |--------------------------------------------------------------------------
+        | Set action URL
+        |--------------------------------------------------------------------------
+        */
 
-        return false;
+        form.action =
+            "{{ url('/admin-dataset') }}"
+            + "/{{ $dataset->id }}"
+            + "/rows/"
+            + row.id;
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil data JSON
+        |--------------------------------------------------------------------------
+        */
+
+        const data =
+            row.data_json || {};
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Isi semua field
+        |--------------------------------------------------------------------------
+        */
+
+        form.querySelectorAll(
+            '[data-field]'
+        ).forEach(function (input) {
+
+            const field =
+                input.dataset.field;
+
+            let value =
+                data[field] ?? '';
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Normalisasi value
+            |--------------------------------------------------------------------------
+            */
+
+            if (value === null || value === undefined) {
+
+                value = '';
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Khusus input date
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                input.type === 'date'
+                && value
+            ) {
+
+                value =
+                    String(value).substring(0, 10);
+
+            }
+
+
+            input.value = value;
+
+        });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Tampilkan modal
+        |--------------------------------------------------------------------------
+        */
+
+        modal.classList.remove('hidden');
+
+        modal.classList.add('flex');
+
+        document.body.classList.add('overflow-hidden');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Focus field pertama
+        |--------------------------------------------------------------------------
+        */
+
+        const firstInput =
+            form.querySelector('[data-field]');
+
+        if (firstInput) {
+
+            setTimeout(function () {
+
+                firstInput.focus();
+
+            }, 100);
+
+        }
     }
 
 
-    const button =
-        form.querySelector('button');
+    function closeEditDataModal()
+    {
 
+        const modal =
+            document.getElementById('editDataModal');
 
-    button.disabled = true;
+        if (!modal) return;
 
+        modal.classList.add('hidden');
 
-    const spinner =
-        button.querySelector('.delete-spinner');
+        modal.classList.remove('flex');
 
-    const icon =
-        button.querySelector('.delete-icon');
-
-
-    if (spinner) {
-
-        spinner.classList.remove('hidden');
+        document.body.classList.remove('overflow-hidden');
 
     }
 
 
-    if (icon) {
+    /* =========================================================
+    DELETE DATA MODAL
+    ========================================================= */
 
-        icon.classList.add('hidden');
+    function openDeleteDataModal(rowId)
+    {
+
+        const modal =
+            document.getElementById('deleteDataModal');
+
+        const form =
+            document.getElementById('deleteDataForm');
+
+        if (!modal || !form) return;
+
+
+        form.action =
+            "{{ url('/admin-dataset') }}"
+            + "/{{ $dataset->id }}"
+            + "/rows/"
+            + rowId;
+
+
+        modal.classList.remove('hidden');
+
+        modal.classList.add('flex');
+
+        document.body.classList.add('overflow-hidden');
 
     }
 
 
-    form.submit();
+    function closeDeleteDataModal()
+    {
 
-    return false;
+        const modal =
+            document.getElementById('deleteDataModal');
 
-}
+        if (!modal) return;
+
+        modal.classList.add('hidden');
+
+        modal.classList.remove('flex');
+
+        document.body.classList.remove('overflow-hidden');
+
+    }
+
+
+    /* =========================================================
+    ESC KEY
+    ========================================================= */
+
+    document.addEventListener(
+        'keydown',
+        function (event) {
+
+            if (event.key !== 'Escape') return;
+
+
+            closeAddDataModal();
+
+            closeEditDataModal();
+
+            closeDeleteDataModal();
+
+        }
+    );
 
 </script>
 
