@@ -124,19 +124,7 @@ class AdminDatasetController extends Controller
 
         $revision = $dataset->activeRevision;
 
-        $page = request()->get('page', 1);
-        $perPage = 10;
-
-        $data = new LengthAwarePaginator(
-            $displayData->forPage($page, $perPage),
-            $displayData->count(),
-            $perPage,
-            $page,
-            [
-                'path' => request()->url(),
-                'query' => request()->query(),
-            ]
-        );
+        $data = $displayData;
 
         // return response()->json($dataset, 200, [], JSON_PRETTY_PRINT);
 
