@@ -2518,6 +2518,7 @@ div.dt-scroll-head {
                         bg-slate-50
                         flex items-center justify-end gap-3">
 
+                        {{-- BATAL --}}
                         <button
                             type="button"
                             onclick="closeEditDataModal()"
@@ -2537,9 +2538,12 @@ div.dt-scroll-head {
                         </button>
 
 
+                        {{-- SIMPAN --}}
                         <button
                             type="submit"
-                            class="inline-flex items-center gap-2
+                            id="editDataSubmitButton"
+                            class="inline-flex items-center justify-center gap-2
+                                min-w-[170px]
                                 px-5 py-2.5
                                 rounded-xl
                                 bg-emerald-600
@@ -2548,11 +2552,28 @@ div.dt-scroll-head {
                                 text-sm
                                 font-semibold
                                 shadow-sm
-                                transition">
+                                hover:shadow-md
+                                transition-all
+                                duration-200">
 
-                            <i class="fa-solid fa-floppy-disk"></i>
+                            {{-- ICON NORMAL --}}
+                            <i
+                                id="editDataSubmitIcon"
+                                class="fa-solid fa-floppy-disk">
+                            </i>
 
-                            Simpan Perubahan
+
+                            {{-- SPINNER --}}
+                            <i
+                                id="editDataSubmitSpinner"
+                                class="fa-solid fa-spinner fa-spin hidden">
+                            </i>
+
+
+                            {{-- TEXT --}}
+                            <span id="editDataSubmitText">
+                                Simpan Perubahan
+                            </span>
 
                         </button>
 
@@ -2833,7 +2854,10 @@ div.dt-scroll-head {
 
                         <button
                             type="submit"
-                            class="px-5 py-2.5
+                            id="deleteDataSubmitButton"
+                            class="inline-flex items-center justify-center gap-2
+                                min-w-[150px]
+                                px-5 py-2.5
                                 rounded-xl
                                 bg-red-600
                                 hover:bg-red-700
@@ -2841,9 +2865,28 @@ div.dt-scroll-head {
                                 text-sm
                                 font-semibold
                                 shadow-sm
-                                transition">
+                                hover:shadow-md
+                                transition-all
+                                duration-200">
 
-                            Ya, Hapus Data
+                            {{-- ICON NORMAL --}}
+                            <i
+                                id="deleteDataSubmitIcon"
+                                class="fa-solid fa-trash">
+                            </i>
+
+
+                            {{-- SPINNER --}}
+                            <i
+                                id="deleteDataSubmitSpinner"
+                                class="fa-solid fa-spinner fa-spin hidden">
+                            </i>
+
+
+                            {{-- TEXT --}}
+                            <span id="deleteDataSubmitText">
+                                Ya, Hapus Data
+                            </span>
 
                         </button>
 
@@ -3434,20 +3477,62 @@ div.dt-scroll-head {
         const form =
             document.getElementById('editDataForm');
 
+        if (!modal || !form) {
+            console.error('Modal edit data tidak ditemukan.');
+            return;
+        }
+
 
         /*
         |--------------------------------------------------------------------------
-        | Validasi modal & form
+        | Reset tombol submit
         |--------------------------------------------------------------------------
         */
 
-        if (!modal || !form) {
+        const submitButton =
+            document.getElementById('editDataSubmitButton');
 
-            console.error(
-                'Modal edit data tidak ditemukan.'
+        const submitIcon =
+            document.getElementById('editDataSubmitIcon');
+
+        const submitSpinner =
+            document.getElementById('editDataSubmitSpinner');
+
+        const submitText =
+            document.getElementById('editDataSubmitText');
+
+
+        if (submitButton) {
+
+            submitButton.disabled = false;
+
+            submitButton.classList.remove(
+                'bg-slate-400',
+                'cursor-not-allowed',
+                'shadow-none'
             );
 
-            return;
+            submitButton.classList.add(
+                'bg-emerald-600',
+                'hover:bg-emerald-700',
+                'hover:shadow-md'
+            );
+        }
+
+
+        if (submitIcon) {
+            submitIcon.classList.remove('hidden');
+        }
+
+
+        if (submitSpinner) {
+            submitSpinner.classList.add('hidden');
+        }
+
+
+        if (submitText) {
+            submitText.textContent =
+                'Simpan Perubahan';
         }
 
 
@@ -3610,12 +3695,77 @@ div.dt-scroll-head {
         if (!modal || !form) return;
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | Set form action
+        |--------------------------------------------------------------------------
+        */
+
         form.action =
             "{{ url('/admin-dataset') }}"
             + "/{{ $dataset->id }}"
             + "/rows/"
             + rowId;
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reset submit button
+        |--------------------------------------------------------------------------
+        */
+
+        const submitButton =
+            document.getElementById('deleteDataSubmitButton');
+
+        const submitIcon =
+            document.getElementById('deleteDataSubmitIcon');
+
+        const submitSpinner =
+            document.getElementById('deleteDataSubmitSpinner');
+
+        const submitText =
+            document.getElementById('deleteDataSubmitText');
+
+
+        if (submitButton) {
+
+            submitButton.disabled = false;
+
+            submitButton.classList.remove(
+                'bg-slate-400',
+                'cursor-not-allowed',
+                'shadow-none'
+            );
+
+            submitButton.classList.add(
+                'bg-red-600',
+                'hover:bg-red-700',
+                'hover:shadow-md'
+            );
+        }
+
+
+        if (submitIcon) {
+            submitIcon.classList.remove('hidden');
+        }
+
+
+        if (submitSpinner) {
+            submitSpinner.classList.add('hidden');
+        }
+
+
+        if (submitText) {
+            submitText.textContent =
+                'Ya, Hapus Data';
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Show modal
+        |--------------------------------------------------------------------------
+        */
 
         modal.classList.remove('hidden');
 
@@ -3642,6 +3792,78 @@ div.dt-scroll-head {
 
     }
 
+    /* =========================================================
+    SUBMIT DELETE DATA
+    ========================================================= */
+
+    const deleteDataForm =
+        document.getElementById('deleteDataForm');
+
+    const deleteDataSubmitButton =
+        document.getElementById('deleteDataSubmitButton');
+
+    const deleteDataSubmitIcon =
+        document.getElementById('deleteDataSubmitIcon');
+
+    const deleteDataSubmitSpinner =
+        document.getElementById('deleteDataSubmitSpinner');
+
+    const deleteDataSubmitText =
+        document.getElementById('deleteDataSubmitText');
+
+
+    deleteDataForm?.addEventListener('submit', function () {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Disable button
+        |--------------------------------------------------------------------------
+        */
+
+        deleteDataSubmitButton.disabled = true;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ubah tampilan button
+        |--------------------------------------------------------------------------
+        */
+
+        deleteDataSubmitButton.classList.remove(
+            'bg-red-600',
+            'hover:bg-red-700',
+            'hover:shadow-md'
+        );
+
+        deleteDataSubmitButton.classList.add(
+            'bg-slate-400',
+            'cursor-not-allowed',
+            'shadow-none'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Icon
+        |--------------------------------------------------------------------------
+        */
+
+        deleteDataSubmitIcon.classList.add('hidden');
+
+        deleteDataSubmitSpinner.classList.remove('hidden');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Text
+        |--------------------------------------------------------------------------
+        */
+
+        deleteDataSubmitText.textContent =
+            'Menghapus...';
+
+    });
+
 
     /* =========================================================
     ESC KEY
@@ -3662,6 +3884,78 @@ div.dt-scroll-head {
 
         }
     );
+
+    /* =========================================================
+    SUBMIT EDIT DATA
+    ========================================================= */
+
+    const editDataForm =
+        document.getElementById('editDataForm');
+
+    const editDataSubmitButton =
+        document.getElementById('editDataSubmitButton');
+
+    const editDataSubmitIcon =
+        document.getElementById('editDataSubmitIcon');
+
+    const editDataSubmitSpinner =
+        document.getElementById('editDataSubmitSpinner');
+
+    const editDataSubmitText =
+        document.getElementById('editDataSubmitText');
+
+
+    editDataForm?.addEventListener('submit', function () {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Disable button
+        |--------------------------------------------------------------------------
+        */
+
+        editDataSubmitButton.disabled = true;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ubah tampilan button
+        |--------------------------------------------------------------------------
+        */
+
+        editDataSubmitButton.classList.remove(
+            'bg-emerald-600',
+            'hover:bg-emerald-700',
+            'hover:shadow-md'
+        );
+
+        editDataSubmitButton.classList.add(
+            'bg-slate-400',
+            'cursor-not-allowed',
+            'shadow-none'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Icon
+        |--------------------------------------------------------------------------
+        */
+
+        editDataSubmitIcon.classList.add('hidden');
+
+        editDataSubmitSpinner.classList.remove('hidden');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Text
+        |--------------------------------------------------------------------------
+        */
+
+        editDataSubmitText.textContent =
+            'Menyimpan...';
+
+    });
 
 </script>
 
