@@ -354,7 +354,6 @@ class AdminDatasetController extends Controller
 
         $dataset->kolom = $kolom;
         $dataset->schema_json = $schema;
-        $dataset->status = 'draft';
         $dataset->save();
 
         $newKey = $request->label;
