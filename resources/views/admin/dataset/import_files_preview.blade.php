@@ -13,10 +13,6 @@
     {{-- PREVIEW --}}
     <div class="bg-white rounded-xl shadow p-5">
 
-        <h2 class="font-semibold text-lg mb-4">
-            Preview File
-        </h2>
-
         @if($extension == 'PDF')
 
             <iframe
@@ -95,7 +91,8 @@
         <form
             method="POST"
             action="{{ route('dataset.importFilesStore') }}"
-            class="mt-8">
+            class="mt-8"
+            onsubmit="submitFileDataset(this)">
 
             @csrf
 
@@ -109,11 +106,55 @@
             <input type="hidden" name="size" value="{{ $size }}">
 
             <button
-                class="w-full bg-green-700 hover:bg-green-800 text-white py-3 rounded-xl transition">
+                type="submit"
+                id="saveDatasetButton"
+                class="w-full inline-flex items-center justify-center gap-2
+                    bg-green-700
+                    hover:bg-green-800
+                    text-white
+                    py-3
+                    rounded-xl
+                    transition
+                    disabled:opacity-60
+                    disabled:cursor-not-allowed">
 
-                <i class="fa-solid fa-floppy-disk"></i>
+                {{-- SPINNER --}}
+                <svg
+                    id="saveDatasetSpinner"
+                    class="hidden animate-spin w-5 h-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24">
 
-                Simpan Dataset
+                    <circle
+                        class="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4">
+                    </circle>
+
+                    <path
+                        class="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+                    </path>
+
+                </svg>
+
+
+                {{-- ICON --}}
+                <i
+                    id="saveDatasetIcon"
+                    class="fa-solid fa-floppy-disk">
+                </i>
+
+
+                {{-- TEXT --}}
+                <span id="saveDatasetText">
+                    Simpan Dataset
+                </span>
 
             </button>
 
@@ -124,3 +165,78 @@
 </div>
 
 @endsection
+
+@push('scripts')
+
+<script>
+
+    function submitFileDataset(form)
+    {
+        const button =
+            document.getElementById('saveDatasetButton');
+
+        const spinner =
+            document.getElementById('saveDatasetSpinner');
+
+        const icon =
+            document.getElementById('saveDatasetIcon');
+
+        const text =
+            document.getElementById('saveDatasetText');
+
+
+        if (!button) {
+            return true;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DISABLE BUTTON
+        |--------------------------------------------------------------------------
+        */
+
+        button.disabled = true;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SHOW SPINNER
+        |--------------------------------------------------------------------------
+        */
+
+        spinner?.classList.remove('hidden');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HIDE NORMAL ICON
+        |--------------------------------------------------------------------------
+        */
+
+        icon?.classList.add('hidden');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CHANGE TEXT
+        |--------------------------------------------------------------------------
+        */
+
+        if (text) {
+            text.textContent = 'Menyimpan...';
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | LANJUTKAN SUBMIT FORM
+        |--------------------------------------------------------------------------
+        */
+
+        return true;
+    }
+
+</script>
+
+@endpush
