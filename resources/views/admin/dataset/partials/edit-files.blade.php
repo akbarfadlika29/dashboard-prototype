@@ -49,7 +49,8 @@
         id="datasetFileForm"
         method="POST"
         action="{{ route('dataset.files.update', $dataset) }}"
-        enctype="multipart/form-data">
+        enctype="multipart/form-data"
+        onsubmit="submitDatasetFile(this)">
 
         @csrf
         @method('PUT')
@@ -237,24 +238,20 @@
                 {{-- SELECTED FILE --}}
                 <div
                     id="datasetFileSelected"
-                    class="hidden w-full max-w-xl">
+                    class="hidden w-full max-w-2xl">
 
                     <div
                         class="
                             flex
                             items-center
                             gap-4
-
                             p-4
-
                             rounded-2xl
-
                             bg-white
-
                             border
                             border-emerald-200
-
-                            shadow-sm">
+                            shadow-sm
+                            transition">
 
                         {{-- FILE ICON --}}
                         <div
@@ -262,12 +259,9 @@
                                 w-12
                                 h-12
                                 shrink-0
-
                                 rounded-xl
-
                                 bg-emerald-50
                                 text-emerald-600
-
                                 flex
                                 items-center
                                 justify-center">
@@ -281,16 +275,29 @@
                         <div class="min-w-0 flex-1">
 
                             <div
+                                class="
+                                    text-xs
+                                    font-medium
+                                    text-slate-400
+                                    uppercase
+                                    tracking-wide
+                                    mb-1">
+
+                                File yang dipilih
+
+                            </div>
+
+                            <div
                                 id="datasetFileName"
                                 class="
                                     font-semibold
                                     text-slate-700
-                                    truncate">
+                                    truncate"
+                                title="">
 
                                 Nama file
 
                             </div>
-
 
                             <div
                                 id="datasetFileSize"
@@ -310,18 +317,16 @@
                         <button
                             type="button"
                             id="datasetFileRemove"
+                            aria-label="Hapus file yang dipilih"
+                            title="Hapus file"
                             class="
                                 w-9
                                 h-9
                                 shrink-0
-
                                 rounded-xl
-
                                 text-slate-400
-
                                 hover:bg-red-50
                                 hover:text-red-600
-
                                 transition">
 
                             <i class="fa-solid fa-xmark"></i>
@@ -337,22 +342,21 @@
                             flex
                             items-center
                             gap-2
-
                             mt-3
-
                             px-3
-                            py-2
-
+                            py-2.5
                             rounded-xl
-
                             bg-emerald-50
-
+                            border
+                            border-emerald-100
                             text-xs
                             text-emerald-700">
 
                         <i class="fa-solid fa-circle-check"></i>
 
-                        File siap diunggah.
+                        <span>
+                            File baru siap diunggah.
+                        </span>
 
                     </div>
 
@@ -630,3 +634,301 @@
 
 </div>
 @endsection
+
+@push('scripts')
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | ELEMENT
+    |--------------------------------------------------------------------------
+    */
+
+    const fileInput =
+        document.getElementById('datasetFileInput');
+
+    const placeholder =
+        document.getElementById('datasetFilePlaceholder');
+
+    const selectedFile =
+        document.getElementById('datasetFileSelected');
+
+    const fileName =
+        document.getElementById('datasetFileName');
+
+    const fileSize =
+        document.getElementById('datasetFileSize');
+
+    const removeButton =
+        document.getElementById('datasetFileRemove');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FILE SELECTED
+    |--------------------------------------------------------------------------
+    */
+
+    fileInput?.addEventListener('change', function () {
+
+        const file = this.files?.[0];
+
+        /*
+        |----------------------------------------------------------------------
+        | Tidak ada file
+        |----------------------------------------------------------------------
+        */
+
+        if (!file) {
+
+            resetFileSelection();
+
+            return;
+        }
+
+
+        /*
+        |----------------------------------------------------------------------
+        | Tampilkan informasi file
+        |----------------------------------------------------------------------
+        */
+
+        if (fileName) {
+
+            fileName.textContent =
+                file.name;
+
+            fileName.title =
+                file.name;
+        }
+
+
+        /*
+        |----------------------------------------------------------------------
+        | Tampilkan ukuran file
+        |----------------------------------------------------------------------
+        */
+
+        if (fileSize) {
+
+            fileSize.textContent =
+                formatFileSize(file.size);
+        }
+
+
+        /*
+        |----------------------------------------------------------------------
+        | Ganti placeholder dengan selected file
+        |----------------------------------------------------------------------
+        */
+
+        placeholder?.classList.add('hidden');
+
+        selectedFile?.classList.remove('hidden');
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | REMOVE FILE
+    |--------------------------------------------------------------------------
+    */
+
+    removeButton?.addEventListener('click', function (event) {
+
+        /*
+        |----------------------------------------------------------------------
+        | Jangan sampai klik tombol dianggap klik dropzone
+        |----------------------------------------------------------------------
+        */
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        /*
+        |----------------------------------------------------------------------
+        | Reset input
+        |----------------------------------------------------------------------
+        */
+
+        if (fileInput) {
+
+            fileInput.value = '';
+        }
+
+
+        resetFileSelection();
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RESET FILE SELECTION
+    |--------------------------------------------------------------------------
+    */
+
+    function resetFileSelection()
+    {
+
+        selectedFile?.classList.add('hidden');
+
+        placeholder?.classList.remove('hidden');
+
+
+        if (fileName) {
+
+            fileName.textContent =
+                'Nama file';
+
+            fileName.title =
+                '';
+        }
+
+
+        if (fileSize) {
+
+            fileSize.textContent =
+                '0 KB';
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FORMAT FILE SIZE
+    |--------------------------------------------------------------------------
+    */
+
+    function formatFileSize(bytes)
+    {
+
+        if (!bytes) {
+
+            return '0 KB';
+        }
+
+
+        const units = [
+            'B',
+            'KB',
+            'MB',
+            'GB'
+        ];
+
+
+        const index =
+            Math.floor(
+                Math.log(bytes) /
+                Math.log(1024)
+            );
+
+
+        const size =
+            bytes /
+            Math.pow(1024, index);
+
+
+        return (
+            Math.round(size * 100) / 100
+        ) + ' ' + units[index];
+
+    }
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| SUBMIT DATASET FILE
+|--------------------------------------------------------------------------
+*/
+
+function submitDatasetFile(form)
+{
+
+    const button =
+        document.getElementById('datasetFileSubmit');
+
+    const icon =
+        document.getElementById('datasetFileSubmitIcon');
+
+    const spinner =
+        document.getElementById('datasetFileSubmitSpinner');
+
+    const text =
+        document.getElementById('datasetFileSubmitText');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pastikan button tersedia
+    |--------------------------------------------------------------------------
+    */
+
+    if (!button) {
+
+        return true;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Disable button
+    |--------------------------------------------------------------------------
+    */
+
+    button.disabled = true;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Hide normal icon
+    |--------------------------------------------------------------------------
+    */
+
+    icon?.classList.add('hidden');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Show spinner
+    |--------------------------------------------------------------------------
+    */
+
+    spinner?.classList.remove('hidden');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Change text
+    |--------------------------------------------------------------------------
+    */
+
+    if (text) {
+
+        text.textContent =
+            'Menyimpan...';
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Continue form submission
+    |--------------------------------------------------------------------------
+    */
+
+    return true;
+
+}
+
+</script>
+
+@endpush
