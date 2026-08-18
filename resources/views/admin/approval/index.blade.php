@@ -227,54 +227,6 @@
                                         Detail
                                     </a>
 
-                                    {{-- APPROVE DATASET --}}
-                                    @if($item->status === 'pending')
-
-                                        <form method="POST"
-                                              action="{{ route('admin.approval.approve', $item) }}">
-                                            @csrf
-
-                                            <button class="w-full rounded-xl bg-green-600 hover:bg-green-700 px-4 py-2 text-sm font-medium text-white transition">
-                                                Approve Dataset
-                                            </button>
-                                        </form>
-
-                                        <form method="POST"
-                                              action="{{ route('admin.approval.reject', $item) }}">
-                                            @csrf
-
-                                            <button class="w-full rounded-xl bg-red-600 hover:bg-red-700 px-4 py-2 text-sm font-medium text-white transition">
-                                                Reject Dataset
-                                            </button>
-                                        </form>
-
-                                    @endif
-
-
-                                    {{-- APPROVE REVISION --}}
-                                    @if($item->activeRevision && $item->activeRevision->status === 'pending')
-
-                                        <form method="POST"
-                                              action="{{ route('admin.approval.approveUpdate', $item) }}">
-                                            @csrf
-
-                                            <button class="w-full rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white transition">
-                                                Approve Revisi
-                                            </button>
-                                        </form>
-
-                                        <form method="POST"
-                                              action="{{ route('admin.approval.rejectUpdate', $item) }}">
-                                            @csrf
-
-                                            <button class="w-full rounded-xl bg-orange-600 hover:bg-orange-700 px-4 py-2 text-sm font-medium text-white transition">
-                                                Reject Revisi
-                                            </button>
-                                        </form>
-
-                                    @endif
-
-
                                     {{-- CANCEL --}}
                                     @if($item->status === 'approved')
 
@@ -286,19 +238,6 @@
                                                 Kembalikan ke Draft
                                             </button>
                                         </form>
-
-                                    @endif
-
-
-                                    {{-- NO ACTION --}}
-                                    @if(
-                                        $item->status === 'draft' ||
-                                        $item->status === 'rejected'
-                                    )
-
-                                        <div class="text-xs text-slate-400 text-center py-2">
-                                            Tidak ada aksi
-                                        </div>
 
                                     @endif
 
