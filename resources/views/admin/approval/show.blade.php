@@ -3,6 +3,302 @@
 @section('title', 'Detail Approval Dataset')
 @section('subtitle', 'Review dataset dan revisi dataset')
 
+@push('styles')
+
+<link rel="stylesheet"
+    href="https://cdn.datatables.net/1.13.11/css/jquery.dataTables.min.css">
+
+<style>
+
+/* =========================================================
+   DATASET DATA TABLE
+   ========================================================= */
+
+#datasetDataTable_wrapper {
+    padding: 0 16px 16px;
+}
+
+#datasetDataTable {
+    width: 100% !important;
+}
+
+#datasetDataTable thead th {
+
+    background: #f8fafc !important;
+
+    color: #334155;
+
+    font-size: 11px;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+
+    font-weight: 700;
+
+    border-bottom: 1px solid #e2e8f0 !important;
+
+    white-space: nowrap;
+
+}
+
+#datasetDataTable tbody td {
+
+    white-space: nowrap;
+
+    vertical-align: middle;
+
+}
+
+#datasetDataTable tbody tr {
+
+    transition: all .15s ease;
+
+}
+
+#datasetDataTable tbody tr:hover {
+
+    background: #f0fdf4 !important;
+
+}
+
+#datasetDataTable tbody tr:nth-child(even) {
+
+    background: #fcfcfd;
+
+}
+
+#datasetDataTable td,
+#datasetDataTable th {
+
+    padding: 13px 16px;
+
+}
+
+
+/* =========================================================
+   SCROLL AREA
+   ========================================================= */
+
+div.dt-scroll-body {
+
+    max-height: 420px !important;
+
+}
+
+.dt-scroll-body::-webkit-scrollbar {
+
+    width: 9px;
+
+    height: 9px;
+
+}
+
+.dt-scroll-body::-webkit-scrollbar-thumb {
+
+    background: #94a3b8;
+
+    border-radius: 20px;
+
+}
+
+.dt-scroll-body::-webkit-scrollbar-track {
+
+    background: #f1f5f9;
+
+}
+
+div.dt-scroll-head {
+
+    overflow: hidden !important;
+
+}
+
+
+/* =========================================================
+   DATATABLE TOOLBAR
+   ========================================================= */
+
+#datasetDataTable_wrapper .dataTables_length,
+#datasetDataTable_wrapper .dataTables_filter {
+
+    margin-top: 16px;
+
+    margin-bottom: 18px;
+
+    padding: 14px 18px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 14px;
+
+    font-size: .9rem;
+
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+#datasetDataTable_wrapper .dataTables_filter input {
+
+    width: 240px;
+
+    height: 42px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 10px;
+
+    padding: 0 14px;
+
+    outline: none;
+
+    transition: all .2s ease;
+
+}
+
+#datasetDataTable_wrapper .dataTables_filter input:focus {
+
+    border-color: #10b981;
+
+    box-shadow:
+        0 0 0 4px rgb(16 185 129 / .15);
+
+}
+
+
+/* =========================================================
+   LENGTH
+   ========================================================= */
+
+#datasetDataTable_wrapper .dataTables_length select {
+
+    height: 42px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 10px;
+
+    padding: 0 14px;
+
+    outline: none;
+
+}
+
+
+/* =========================================================
+   PAGINATION
+   ========================================================= */
+
+#datasetDataTable_wrapper .dataTables_paginate {
+
+    margin-top: 18px;
+
+}
+
+#datasetDataTable_wrapper .paginate_button {
+
+    min-width: 38px;
+
+    height: 38px;
+
+    line-height: 26px;
+
+    padding: 6px 12px !important;
+
+    border-radius: 10px !important;
+
+    transition: all .2s ease;
+
+}
+
+#datasetDataTable_wrapper
+.dataTables_paginate
+.paginate_button.current,
+#datasetDataTable_wrapper
+.dataTables_paginate
+.paginate_button.current:hover {
+
+    background: #059669 !important;
+
+    border: 1px solid #059669 !important;
+
+    color: #ffffff !important;
+
+    font-weight: 700;
+
+    box-shadow:
+        0 4px 12px rgba(5,150,105,.25);
+
+}
+
+#datasetDataTable_wrapper
+.dataTables_paginate
+.paginate_button:not(.current):hover {
+
+    background: #f1f5f9 !important;
+
+    border: 1px solid #cbd5e1 !important;
+
+    color: #334155 !important;
+
+}
+
+#datasetDataTable_wrapper .dataTables_info {
+
+    color: #64748b;
+
+}
+
+
+/* =========================================================
+   CUSTOM SCROLLBAR
+   ========================================================= */
+
+.custom-scrollbar::-webkit-scrollbar {
+
+    width: 7px;
+
+    height: 7px;
+
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+
+    background: #f8fafc;
+
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+
+    background: #cbd5e1;
+
+    border-radius: 999px;
+
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+
+    background: #94a3b8;
+
+}
+
+.custom-scrollbar {
+
+    scrollbar-width: thin;
+
+    scrollbar-color: #cbd5e1 #f8fafc;
+
+}
+
+</style>
+
+@endpush
+
 @section('content')
 
 <div class="max-w-7xl mx-auto space-y-6">
@@ -553,169 +849,293 @@
 
     @if($dataset->first_created != 'files')
 
-        {{-- KOLOM --}}
+        {{-- =========================================================
+            STRUKTUR KOLOM
+            ========================================================= --}}
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
 
-            <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+            {{-- HEADER --}}
+            <div class="px-6 py-5 border-b border-slate-200">
 
-                <div>
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
-                    <h2 class="text-xl font-bold text-slate-800">
-                        Struktur Kolom
-                    </h2>
+                    <div class="flex items-start gap-3">
 
-                    <p class="text-sm text-slate-500 mt-1">
-                        Struktur kolom dataset
-                    </p>
+                        {{-- ICON --}}
+                        <div class="flex-shrink-0 w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
 
-                </div>
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="w-5 h-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="1.8">
 
-                <div class="text-sm text-slate-500">
-                    {{ count($dataset->schema_json ?? []) }} kolom
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M4 6h16M4 12h16M4 18h10"/>
+
+                            </svg>
+
+                        </div>
+
+
+                        {{-- TITLE --}}
+                        <div>
+
+                            <h2 class="text-lg font-bold text-slate-800">
+                                Struktur Dataset
+                            </h2>
+
+                            <p class="text-sm text-slate-500 mt-1">
+                                {{ count($dataset->schema_json ?? []) }} kolom tersedia dalam dataset ini
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- INFO --}}
+                    <div class="text-xs text-slate-400 flex items-center gap-2">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor">
+
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"/>
+
+                        </svg>
+
+                        <span>
+                            Struktur kolom dataset
+                        </span>
+
+                    </div>
+
                 </div>
 
             </div>
 
+
+            {{-- TABLE --}}
             <div class="overflow-x-auto">
 
-                <table class="min-w-full text-sm">
+                {{-- 
+                    Body table dibatasi agar card tidak terlalu panjang.
+                    Header tabel tetap terlihat ketika body di-scroll.
+                --}}
+                <div class="max-h-[420px] overflow-y-auto custom-scrollbar">
 
-                    <thead class="bg-slate-50 text-slate-600 uppercase text-xs tracking-wide">
-                        <tr>
+                    <table class="min-w-full">
 
-                            <th class="px-6 py-4 text-left">
-                                Nama Kolom
-                            </th>
-
-                            <th class="px-6 py-4 text-left">
-                                Tipe
-                            </th>
-
-                        </tr>
-                    </thead>
-
-                    <tbody class="divide-y divide-slate-100">
-
-                        @forelse($dataset->schema_json ?? [] as $column)
-
-                            <tr class="hover:bg-slate-50 transition">
-
-                                <td class="px-6 py-4 font-medium text-slate-800">
-                                    {{ $column['name'] ?? '-' }}
-                                </td>
-
-                                <td class="px-6 py-4 text-slate-600 capitalize">
-                                    {{ $column['type'] ?? 'text' }}
-                                </td>
-
-                            </tr>
-
-                        @empty
+                        {{-- TABLE HEADER --}}
+                        <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200">
 
                             <tr>
 
-                                <td colspan="2"
-                                    class="px-6 py-12 text-center text-slate-500">
+                                <th class="w-16 px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                    #
+                                </th>
 
-                                    Tidak ada struktur kolom
+                                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                    Nama Kolom
+                                </th>
 
-                                </td>
-
-                            </tr>
-
-                        @endforelse
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    @endif
-
-    @if($dataset->first_created != 'files')
-
-        {{-- DATASET --}}
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-
-            <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-
-                <div>
-
-                    <h2 class="text-xl font-bold text-slate-800">
-                        Isi Dataset
-                    </h2>
-
-                    <p class="text-sm text-slate-500 mt-1">
-                        Data utama dataset
-                    </p>
-
-                </div>
-
-                <div class="text-sm text-slate-500">
-                    {{ $datasetData->total() }} data
-                </div>
-
-            </div>
-
-            @if($datasetData->count())
-
-                <div class="overflow-x-auto">
-
-                    <table class="min-w-full text-sm">
-
-                        <thead class="bg-slate-50 text-slate-600 uppercase text-xs tracking-wide whitespace-nowrap">
-
-                            <tr>
-
-                                @foreach($dataset->schema_json ?? [] as $column)
-
-                                    <th class="px-6 py-4 text-left">
-                                        {{ $column['name'] }}
-                                    </th>
-
-                                @endforeach
+                                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                    Tipe Data
+                                </th>
 
                             </tr>
 
                         </thead>
 
+
+                        {{-- TABLE BODY --}}
                         <tbody class="divide-y divide-slate-100">
 
-                            @foreach($datasetData as $row)
+                            @forelse($dataset->schema_json ?? [] as $i => $column)
 
-                                <tr class="hover:bg-slate-50 transition">
+                                @php
 
-                                    @foreach($dataset->schema_json ?? [] as $column)
+                                    $name = is_array($column)
+                                        ? ($column['name'] ?? '-')
+                                        : $column;
 
-                                        <td class="px-6 py-4 whitespace-nowrap text-slate-700">
+                                    $type = is_array($column)
+                                        ? ($column['type'] ?? 'text')
+                                        : 'text';
 
-                                            {{ $row->data_json[$column['name']] ?? '-' }}
 
-                                        </td>
+                                    $typeConfig = match(strtolower($type)) {
 
-                                    @endforeach
+                                        'number' => [
+                                            'label' => 'Number',
+                                            'class' => 'bg-blue-50 text-blue-700 border-blue-100',
+                                            'icon' => '123'
+                                        ],
+
+                                        'date' => [
+                                            'label' => 'Date',
+                                            'class' => 'bg-violet-50 text-violet-700 border-violet-100',
+                                            'icon' => 'DATE'
+                                        ],
+
+                                        default => [
+                                            'label' => 'Text',
+                                            'class' => 'bg-slate-50 text-slate-700 border-slate-200',
+                                            'icon' => 'Aa'
+                                        ]
+
+                                    };
+
+                                @endphp
+
+
+                                <tr class="group hover:bg-slate-50/80 transition-colors duration-150">
+
+                                    {{-- INDEX --}}
+                                    <td class="px-6 py-4 text-center">
+
+                                        <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-100 text-slate-500 text-xs font-semibold">
+
+                                            {{ $i + 1 }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    {{-- NAME --}}
+                                    <td class="px-6 py-4">
+
+                                        <div class="flex items-center gap-3">
+
+                                            <div class="min-w-0">
+
+                                                <div class="font-semibold text-slate-800 truncate max-w-md">
+
+                                                    {{ $name }}
+
+                                                </div>
+
+                                                <div class="text-xs text-slate-400 mt-0.5">
+
+                                                    Field #{{ $i + 1 }}
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    {{-- TYPE --}}
+                                    <td class="px-6 py-4">
+
+                                        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold {{ $typeConfig['class'] }}">
+
+                                            <span class="font-mono text-[10px] opacity-70">
+
+                                                {{ $typeConfig['icon'] }}
+
+                                            </span>
+
+                                            {{ $typeConfig['label'] }}
+
+                                        </span>
+
+                                    </td>
 
                                 </tr>
 
-                            @endforeach
+
+                            @empty
+
+                                <tr>
+
+                                    <td colspan="3"
+                                        class="px-6 py-16 text-center">
+
+                                        <div class="flex flex-col items-center">
+
+                                            <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mb-4">
+
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="w-7 h-7"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+
+                                                    <path stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="1.7"
+                                                        d="M4 6h16M4 12h16M4 18h10"/>
+
+                                                </svg>
+
+                                            </div>
+
+                                            <p class="font-semibold text-slate-700">
+
+                                                Belum ada struktur kolom
+
+                                            </p>
+
+                                            <p class="text-sm text-slate-400 mt-1">
+
+                                                Dataset ini belum memiliki kolom.
+
+                                            </p>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            @endforelse
 
                         </tbody>
 
                     </table>
-                    <div class="px-6 py-4 border-t border-slate-200">
-                        {{ $datasetData->links() }}
-                    </div>
 
                 </div>
 
-            @else
+            </div>
 
-                <div class="px-6 py-16 text-center text-slate-500">
 
-                    Belum ada data dataset
+            {{-- FOOTER --}}
+            @if(count($dataset->schema_json ?? []) > 0)
+
+                <div class="px-6 py-4 bg-slate-50 border-t border-slate-200">
+
+                    <div class="flex items-center justify-between gap-4">
+
+                        <p class="text-xs text-slate-500">
+
+                            <span class="font-semibold text-slate-600">
+                                {{ count($dataset->schema_json ?? []) }}
+                            </span>
+
+                            kolom terdaftar dalam dataset.
+
+                        </p>
+
+                        <p class="hidden sm:block text-xs text-slate-400">
+
+                            Struktur kolom hanya dapat ditinjau pada halaman approval.
+
+                        </p>
+
+                    </div>
 
                 </div>
 
@@ -725,82 +1145,423 @@
 
     @endif
 
-    {{-- LOG --}}
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    @if($dataset->first_created != 'files')
 
-        <div class="px-6 py-5 border-b border-slate-200">
+        {{-- =========================================================
+            DATA DATASET
+            ========================================================= --}}
 
-            <h2 class="text-xl font-bold text-slate-800">
-                Riwayat Approval
-            </h2>
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
 
-            <p class="text-sm text-slate-500 mt-1">
-                Seluruh aktivitas approval dataset
-            </p>
+            {{-- CARD HEADER --}}
+            <div class="px-6 py-5 border-b border-slate-200">
 
-        </div>
-
-        <div class="divide-y divide-slate-100">
-
-            @forelse($dataset->approvalLogs as $log)
-
-                @php
-                    $badge = match($log->action) {
-                        'submit' => 'bg-blue-100 text-blue-700',
-                        'approve' => 'bg-green-100 text-green-700',
-                        'reject' => 'bg-red-100 text-red-700',
-                        'submit_update' => 'bg-indigo-100 text-indigo-700',
-                        'approve_update' => 'bg-emerald-100 text-emerald-700',
-                        'reject_update' => 'bg-orange-100 text-orange-700',
-                        default => 'bg-slate-100 text-slate-700',
-                    };
-                @endphp
-
-                <div class="px-6 py-5 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
                     <div>
 
-                        <div class="flex items-center gap-2 flex-wrap">
+                        <div class="flex items-center gap-3">
 
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold capitalize {{ $badge }}">
-                                {{ str_replace('_', ' ', $log->action) }}
-                            </span>
+                            {{-- ICON --}}
+                            <div class="w-10 h-10 rounded-xl
+                                bg-emerald-50
+                                text-emerald-600
+                                flex items-center justify-center">
 
-                            <span class="text-sm text-slate-500">
-                                {{ $log->created_at->format('d M Y H:i') }}
-                            </span>
+                                <i class="fa-solid fa-table"></i>
+
+                            </div>
+
+                            {{-- TITLE --}}
+                            <div>
+
+                                <h2 class="text-xl font-bold text-slate-800">
+                                    Data Dataset
+                                </h2>
+
+                                <p class="text-sm text-slate-500 mt-0.5">
+                                    Data utama yang tersimpan dalam dataset.
+                                </p>
+
+                            </div>
 
                         </div>
 
-                        @if($log->catatan)
-
-                            <div class="mt-3 text-sm text-slate-700">
-                                {{ $log->catatan }}
-                            </div>
-
-                        @endif
-
                     </div>
 
-                    <div class="text-sm text-slate-500 whitespace-nowrap">
 
-                        {{ $log->creator->nama ?? '-' }}
+                    {{-- TOTAL DATA --}}
+                    <div class="flex items-center gap-2">
+
+                        <span class="inline-flex items-center gap-2
+                            px-3 py-2
+                            rounded-xl
+                            bg-slate-50
+                            border border-slate-200
+                            text-sm
+                            text-slate-600">
+
+                            <i class="fa-solid fa-database text-slate-400"></i>
+
+                            <span>
+                                {{ $datasetData->count() }} data
+                            </span>
+
+                        </span>
 
                     </div>
 
                 </div>
 
-            @empty
+            </div>
 
-                <div class="px-6 py-16 text-center text-slate-500">
 
-                    Belum ada riwayat approval
+            {{-- DATA TABLE --}}
+            <div class="p-4">
+
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-2">
+
+                    <div class="bg-white rounded-xl overflow-hidden">
+
+                        <table
+                            id="datasetDataTable"
+                            class="display nowrap w-full text-sm">
+
+                            <thead>
+
+                                <tr>
+
+                                    @foreach($dataset->schema_json ?? [] as $column)
+
+                                        <th>
+                                            {{ $column['name'] ?? '-' }}
+                                        </th>
+
+                                    @endforeach
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                @forelse($datasetData as $row)
+
+                                    <tr>
+
+                                        @foreach($dataset->schema_json ?? [] as $column)
+
+                                            @php
+
+                                                $field = $column['name'] ?? null;
+
+                                                $value = $field
+                                                    ? ($row->data_json[$field] ?? null)
+                                                    : null;
+
+                                            @endphp
+
+                                            <td>
+
+                                                @if($value === null || $value === '')
+
+                                                    <span class="text-slate-400">
+                                                        —
+                                                    </span>
+
+                                                @else
+
+                                                    {{ $value }}
+
+                                                @endif
+
+                                            </td>
+
+                                        @endforeach
+
+                                    </tr>
+
+                                @empty
+
+                                    <tr>
+
+                                        <td
+                                            colspan="{{ count($dataset->schema_json ?? []) }}"
+                                            class="py-16 text-center">
+
+                                            <div class="flex flex-col items-center justify-center">
+
+                                                <div class="w-14 h-14 rounded-2xl
+                                                    bg-slate-100
+                                                    text-slate-400
+                                                    flex items-center justify-center
+                                                    mb-4">
+
+                                                    <i class="fa-solid fa-database text-xl"></i>
+
+                                                </div>
+
+                                                <div class="font-semibold text-slate-700">
+                                                    Belum ada data
+                                                </div>
+
+                                                <div class="text-sm text-slate-500 mt-1">
+                                                    Dataset ini belum memiliki data.
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+                                @endforelse
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
 
                 </div>
 
-            @endforelse
+            </div>
 
         </div>
+
+    @endif
+
+    {{-- =========================================================
+        RIWAYAT APPROVAL
+        ========================================================= --}}
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+
+        {{-- HEADER --}}
+        <div class="px-6 py-5 border-b border-slate-200 bg-white">
+
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+                <div>
+
+                    <h2 class="text-xl font-bold text-slate-800">
+                        Riwayat Approval
+                    </h2>
+
+                    <p class="text-sm text-slate-500 mt-1">
+                        Seluruh aktivitas approval dataset
+                    </p>
+
+                </div>
+
+                {{-- JUMLAH LOG --}}
+                <div class="inline-flex items-center gap-2
+                            px-3 py-2
+                            rounded-xl
+                            bg-slate-50
+                            border border-slate-200
+                            text-sm text-slate-600">
+
+                    <i class="fa-solid fa-clock-rotate-left text-slate-400"></i>
+
+                    <span>
+                        {{ $dataset->approvalLogs->count() }} aktivitas
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {{-- SCROLL AREA --}}
+        <div class="max-h-[420px] overflow-y-auto custom-scrollbar">
+
+            <div class="divide-y divide-slate-100">
+
+                @forelse($dataset->approvalLogs as $log)
+
+                    @php
+                        $badge = match($log->action) {
+                            'submit' => 'bg-blue-100 text-blue-700',
+                            'approve' => 'bg-green-100 text-green-700',
+                            'reject' => 'bg-red-100 text-red-700',
+                            'submit_update' => 'bg-indigo-100 text-indigo-700',
+                            'approve_update' => 'bg-emerald-100 text-emerald-700',
+                            'reject_update' => 'bg-orange-100 text-orange-700',
+                            default => 'bg-slate-100 text-slate-700',
+                        };
+
+                        $icon = match($log->action) {
+                            'submit' => 'fa-paper-plane',
+                            'approve' => 'fa-circle-check',
+                            'reject' => 'fa-circle-xmark',
+                            'submit_update' => 'fa-pen-to-square',
+                            'approve_update' => 'fa-check-double',
+                            'reject_update' => 'fa-ban',
+                            default => 'fa-clock',
+                        };
+                    @endphp
+
+
+                    {{-- LOG ITEM --}}
+                    <div class="px-6 py-5
+                                hover:bg-slate-50/70
+                                transition-colors duration-150">
+
+                        <div class="flex flex-col lg:flex-row
+                                    lg:items-start
+                                    lg:justify-between
+                                    gap-4">
+
+                            {{-- LEFT --}}
+                            <div class="min-w-0">
+
+                                <div class="flex items-center gap-3 flex-wrap">
+
+                                    {{-- ICON --}}
+                                    <div class="w-9 h-9
+                                                rounded-xl
+                                                flex items-center justify-center
+                                                {{ $badge }}">
+
+                                        <i class="fa-solid {{ $icon }} text-sm"></i>
+
+                                    </div>
+
+
+                                    {{-- ACTION --}}
+                                    <span class="px-3 py-1
+                                                rounded-full
+                                                text-xs
+                                                font-semibold
+                                                capitalize
+                                                {{ $badge }}">
+
+                                        {{ str_replace('_', ' ', $log->action) }}
+
+                                    </span>
+
+
+                                    {{-- DATE --}}
+                                    <span class="text-sm text-slate-500">
+
+                                        {{ $log->created_at->format('d M Y H:i') }}
+
+                                    </span>
+
+                                </div>
+
+
+                                {{-- CATATAN --}}
+                                @if($log->catatan)
+
+                                    <div class="mt-3
+                                                ml-0 lg:ml-12
+                                                text-sm
+                                                text-slate-700
+                                                bg-slate-50
+                                                border border-slate-200
+                                                rounded-xl
+                                                px-4 py-3">
+
+                                        <div class="text-xs
+                                                    font-semibold
+                                                    text-slate-400
+                                                    uppercase
+                                                    tracking-wide
+                                                    mb-1">
+
+                                            Catatan
+
+                                        </div>
+
+                                        {{ $log->catatan }}
+
+                                    </div>
+
+                                @endif
+
+                            </div>
+
+
+                            {{-- USER --}}
+                            <div class="flex items-center gap-2
+                                        text-sm text-slate-500
+                                        whitespace-nowrap
+                                        lg:pt-1">
+
+                                <i class="fa-solid fa-user text-slate-400"></i>
+
+                                <span>
+                                    {{ $log->user->nama ?? '-' }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                @empty
+
+                    {{-- EMPTY --}}
+                    <div class="px-6 py-16 text-center text-slate-500">
+
+                        <div class="flex flex-col items-center">
+
+                            <div class="w-14 h-14
+                                        rounded-2xl
+                                        bg-slate-100
+                                        text-slate-400
+                                        flex items-center justify-center
+                                        mb-4">
+
+                                <i class="fa-solid fa-clock-rotate-left text-xl"></i>
+
+                            </div>
+
+                            <div class="font-semibold text-slate-700">
+                                Belum ada riwayat approval
+                            </div>
+
+                            <div class="text-sm text-slate-400 mt-1">
+                                Aktivitas approval dataset akan muncul di sini.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                @endforelse
+
+            </div>
+
+        </div>
+
+
+        {{-- FOOTER --}}
+        @if($dataset->approvalLogs->count() > 0)
+
+            <div class="px-6 py-3
+                        bg-slate-50
+                        border-t border-slate-200">
+
+                <p class="text-xs text-slate-500">
+
+                    Menampilkan
+                    <span class="font-semibold text-slate-700">
+                        {{ $dataset->approvalLogs->count() }}
+                    </span>
+                    aktivitas approval.
+
+                </p>
+
+            </div>
+
+        @endif
 
     </div>
 
@@ -820,5 +1581,172 @@
     </div>
 
 </div>
+
+@push('scripts')
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | DATASET DATA TABLE
+    |--------------------------------------------------------------------------
+    */
+
+    const table = $('#datasetDataTable');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pastikan tabel memang ada
+    |--------------------------------------------------------------------------
+    */
+
+    if (!table.length) {
+        return;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Hindari inisialisasi DataTables lebih dari satu kali
+    |--------------------------------------------------------------------------
+    */
+
+    if ($.fn.DataTable.isDataTable('#datasetDataTable')) {
+        table.DataTable().destroy();
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | INIT DATATABLE
+    |--------------------------------------------------------------------------
+    */
+
+    table.DataTable({
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAGINATION
+        |--------------------------------------------------------------------------
+        */
+
+        pageLength: 25,
+
+        lengthMenu: [
+            [10, 25, 50, 100, -1],
+            [10, 25, 50, 100, "Semua"]
+        ],
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SCROLL
+        |--------------------------------------------------------------------------
+        */
+
+        scrollY: '420px',
+
+        scrollX: true,
+
+        scrollCollapse: true,
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | WIDTH
+        |--------------------------------------------------------------------------
+        */
+
+        autoWidth: false,
+
+        deferRender: true,
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JANGAN GUNAKAN STATE SAVE
+        |--------------------------------------------------------------------------
+        */
+
+        stateSave: false,
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DEFAULT SORT
+        |--------------------------------------------------------------------------
+        */
+
+        order: [],
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | LANGUAGE
+        |--------------------------------------------------------------------------
+        */
+
+        language: {
+
+            search: "",
+
+            searchPlaceholder: "Cari data...",
+
+            lengthMenu: "Tampilkan _MENU_ data",
+
+            info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+
+            infoEmpty: "Tidak ada data",
+
+            infoFiltered: "(difilter dari _MAX_ total data)",
+
+            zeroRecords: "Data tidak ditemukan",
+
+            emptyTable: "Belum ada data dataset",
+
+            paginate: {
+
+                previous: "←",
+
+                next: "→"
+
+            }
+
+        },
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CALLBACK
+        |--------------------------------------------------------------------------
+        */
+
+        initComplete: function () {
+
+            const filter =
+                $('#datasetDataTable_wrapper .dataTables_filter label');
+
+            if (
+                filter.length &&
+                !filter.find('.fa-magnifying-glass').length
+            ) {
+
+                filter.prepend(
+                    '<i class="fa-solid fa-magnifying-glass text-slate-400 mr-2"></i>'
+                );
+
+            }
+
+        }
+
+    });
+
+});
+
+</script>
+
+@endpush
 
 @endsection

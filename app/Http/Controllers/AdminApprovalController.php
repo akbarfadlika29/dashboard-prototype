@@ -51,7 +51,8 @@ class AdminApprovalController extends Controller
             'seksi',
             'creator',
             'filters',
-            'activeRevision.changes'
+            'activeRevision.changes',
+            'approvalLogs.user',
         ]);
 
         if ($dataset->first_created == 'files') {
@@ -62,7 +63,7 @@ class AdminApprovalController extends Controller
 
         $datasetData = $dataset->data()
             ->latest()
-            ->paginate(10);
+            ->get();
 
         return view(
             'admin.approval.show',
