@@ -504,25 +504,106 @@ div.dt-scroll-head {
 
             <div class="flex flex-col md:flex-row gap-3">
 
-                <form method="POST"
-                    action="{{ route('admin.approval.approve', $dataset) }}"
-                    class="flex-1">
-                    @csrf
+                {{-- APPROVE DATASET --}}
+                <div
+                    x-data="{
+                        loading: false
+                    }"
+                    class="flex-1"
+                >
 
-                    <button class="w-full h-12 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-medium transition">
-                        Approve Dataset
-                    </button>
-                </form>
+                    <form
+                        method="POST"
+                        action="{{ route('admin.approval.approve', $dataset) }}"
+                        @submit="loading = true"
+                    >
 
-                <form method="POST"
-                    action="{{ route('admin.approval.reject', $dataset) }}"
-                    class="flex-1">
-                    @csrf
+                        @csrf
 
-                    <button class="w-full h-12 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-medium transition">
-                        Reject Dataset
-                    </button>
-                </form>
+                        <button
+                            type="submit"
+                            :disabled="loading"
+                            class="w-full h-12 rounded-2xl
+                                bg-green-600 hover:bg-green-700
+                                disabled:bg-green-400
+                                disabled:cursor-not-allowed
+                                disabled:opacity-70
+                                text-white font-medium transition
+                                inline-flex items-center justify-center gap-2"
+                        >
+
+                            <i
+                                x-show="!loading"
+                                class="fa-solid fa-circle-check"
+                            ></i>
+
+                            <i
+                                x-show="loading"
+                                class="fa-solid fa-spinner fa-spin"
+                            ></i>
+
+                            <span
+                                x-text="loading
+                                    ? 'Memproses...'
+                                    : 'Approve Dataset'"
+                            ></span>
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                {{-- REJECT DATASET --}}
+                <div
+                    x-data="{
+                        loading: false
+                    }"
+                    class="flex-1"
+                >
+
+                    <form
+                        method="POST"
+                        action="{{ route('admin.approval.reject', $dataset) }}"
+                        @submit="loading = true"
+                    >
+
+                        @csrf
+
+                        <button
+                            type="submit"
+                            :disabled="loading"
+                            class="w-full h-12 rounded-2xl
+                                bg-red-600 hover:bg-red-700
+                                disabled:bg-red-400
+                                disabled:cursor-not-allowed
+                                disabled:opacity-70
+                                text-white font-medium transition
+                                inline-flex items-center justify-center gap-2"
+                        >
+
+                            <i
+                                x-show="!loading"
+                                class="fa-solid fa-circle-xmark"
+                            ></i>
+
+                            <i
+                                x-show="loading"
+                                class="fa-solid fa-spinner fa-spin"
+                            ></i>
+
+                            <span
+                                x-text="loading
+                                    ? 'Memproses...'
+                                    : 'Reject Dataset'"
+                            ></span>
+
+                        </button>
+
+                    </form>
+
+                </div>
 
             </div>
 
@@ -547,25 +628,106 @@ div.dt-scroll-head {
 
                 <div class="flex flex-col md:flex-row gap-3">
 
-                    <form method="POST"
-                        action="{{ route('admin.approval.approveUpdate', $dataset) }}"
-                        class="flex-1">
-                        @csrf
+                    {{-- APPROVE REVISI --}}
+                    <div
+                        x-data="{
+                            loading: false
+                        }"
+                        class="flex-1"
+                    >
 
-                        <button class="w-full h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-medium transition">
-                            Approve Revisi
-                        </button>
-                    </form>
+                        <form
+                            method="POST"
+                            action="{{ route('admin.approval.approveUpdate', $dataset) }}"
+                            @submit="loading = true"
+                        >
 
-                    <form method="POST"
-                        action="{{ route('admin.approval.rejectUpdate', $dataset) }}"
-                        class="flex-1">
-                        @csrf
+                            @csrf
 
-                        <button class="w-full h-12 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white font-medium transition">
-                            Reject Revisi
-                        </button>
-                    </form>
+                            <button
+                                type="submit"
+                                :disabled="loading"
+                                class="w-full h-12 rounded-2xl
+                                    bg-blue-600 hover:bg-blue-700
+                                    disabled:bg-blue-400
+                                    disabled:cursor-not-allowed
+                                    disabled:opacity-70
+                                    text-white font-medium transition
+                                    inline-flex items-center justify-center gap-2"
+                            >
+
+                                <i
+                                    x-show="!loading"
+                                    class="fa-solid fa-check-double"
+                                ></i>
+
+                                <i
+                                    x-show="loading"
+                                    class="fa-solid fa-spinner fa-spin"
+                                ></i>
+
+                                <span
+                                    x-text="loading
+                                        ? 'Memproses...'
+                                        : 'Approve Revisi'"
+                                ></span>
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+
+                    {{-- REJECT REVISI --}}
+                    <div
+                        x-data="{
+                            loading: false
+                        }"
+                        class="flex-1"
+                    >
+
+                        <form
+                            method="POST"
+                            action="{{ route('admin.approval.rejectUpdate', $dataset) }}"
+                            @submit="loading = true"
+                        >
+
+                            @csrf
+
+                            <button
+                                type="submit"
+                                :disabled="loading"
+                                class="w-full h-12 rounded-2xl
+                                    bg-orange-600 hover:bg-orange-700
+                                    disabled:bg-orange-400
+                                    disabled:cursor-not-allowed
+                                    disabled:opacity-70
+                                    text-white font-medium transition
+                                    inline-flex items-center justify-center gap-2"
+                            >
+
+                                <i
+                                    x-show="!loading"
+                                    class="fa-solid fa-ban"
+                                ></i>
+
+                                <i
+                                    x-show="loading"
+                                    class="fa-solid fa-spinner fa-spin"
+                                ></i>
+
+                                <span
+                                    x-text="loading
+                                        ? 'Memproses...'
+                                        : 'Reject Revisi'"
+                                ></span>
+
+                            </button>
+
+                        </form>
+
+                    </div>
 
                 </div>
 
@@ -1742,7 +1904,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
     });
-
 });
 
 </script>

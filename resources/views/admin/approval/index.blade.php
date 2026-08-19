@@ -230,14 +230,153 @@
                                     {{-- CANCEL --}}
                                     @if($item->status === 'approved')
 
-                                        <form method="POST"
-                                              action="{{ route('admin.approval.cancel', $item) }}">
-                                            @csrf
+                                        <div
+                                            x-data="{
+                                                showModal: false,
+                                                loading: false
+                                            }"
+                                        >
 
-                                            <button class="w-full rounded-xl bg-slate-700 hover:bg-slate-800 px-4 py-2 text-sm font-medium text-white transition">
+                                            {{-- BUTTON KEMBALIKAN KE DRAFT --}}
+                                            <button
+                                                type="button"
+                                                @click="showModal = true"
+                                                class="w-full rounded-xl bg-slate-700 hover:bg-slate-800 px-4 py-2 text-sm font-medium text-white transition"
+                                            >
+                                                <i class="fa-solid fa-rotate-left mr-1"></i>
                                                 Kembalikan ke Draft
                                             </button>
-                                        </form>
+
+
+                                            {{-- MODAL --}}
+                                            <div
+                                                x-show="showModal"
+                                                x-cloak
+                                                x-transition.opacity
+                                                class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+                                            >
+
+                                                {{-- OVERLAY --}}
+                                                <div
+                                                    class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+                                                    @click="if (!loading) showModal = false"
+                                                ></div>
+
+
+                                                {{-- MODAL CONTENT --}}
+                                                <div
+                                                    x-show="showModal"
+                                                    x-transition:enter="transition ease-out duration-200"
+                                                    x-transition:enter-start="opacity-0 scale-95"
+                                                    x-transition:enter-end="opacity-100 scale-100"
+                                                    x-transition:leave="transition ease-in duration-150"
+                                                    x-transition:leave-start="opacity-100 scale-100"
+                                                    x-transition:leave-end="opacity-0 scale-95"
+                                                    class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden"
+                                                >
+
+                                                    {{-- ICON --}}
+                                                    <div class="px-6 pt-6">
+
+                                                        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
+
+                                                            <i class="fa-solid fa-rotate-left text-lg"></i>
+
+                                                        </div>
+
+                                                    </div>
+
+
+                                                    {{-- CONTENT --}}
+                                                    <div class="px-6 py-5">
+
+                                                        <h3 class="text-lg font-bold text-slate-800">
+                                                            Kembalikan ke Draft?
+                                                        </h3>
+
+                                                        <p class="text-sm text-slate-500 mt-2 leading-relaxed">
+
+                                                            Apakah Anda yakin ingin mengembalikan dataset
+
+                                                            <span class="font-semibold text-slate-700">
+                                                                "{{ $item->nama }}"
+                                                            </span>
+
+                                                            ke status Draft?
+
+                                                        </p>
+
+                                                        <p class="text-xs text-amber-600 mt-3">
+                                                            Dataset yang dikembalikan ke Draft tidak dapat diajukan kembali. Hanya berfungsi untuk menghapus Dataset.
+                                                        </p>
+
+                                                    </div>
+
+
+                                                    {{-- ACTION --}}
+                                                    <div class="px-6 py-5 bg-slate-50 border-t border-slate-200">
+
+                                                        <div class="flex gap-3">
+
+                                                            {{-- BATAL --}}
+                                                            <button
+                                                                type="button"
+                                                                @click="showModal = false"
+                                                                :disabled="loading"
+                                                                class="flex-1 h-11 rounded-xl border border-slate-300 bg-white text-slate-700 font-medium hover:bg-slate-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                                            >
+                                                                Batal
+                                                            </button>
+
+
+                                                            {{-- KONFIRMASI --}}
+                                                            <form
+                                                                method="POST"
+                                                                action="{{ route('admin.approval.cancel', $item) }}"
+                                                                class="flex-1"
+                                                                @submit="loading = true"
+                                                            >
+
+                                                                @csrf
+
+                                                                <button
+                                                                    type="submit"
+                                                                    :disabled="loading"
+                                                                    class="w-full h-11 rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-medium transition flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                                                >
+
+                                                                    {{-- ICON --}}
+                                                                    <i
+                                                                        x-show="!loading"
+                                                                        class="fa-solid fa-rotate-left"
+                                                                    ></i>
+
+                                                                    {{-- SPINNER --}}
+                                                                    <i
+                                                                        x-show="loading"
+                                                                        class="fa-solid fa-spinner fa-spin"
+                                                                    ></i>
+
+                                                                    {{-- TEXT --}}
+                                                                    <span
+                                                                        x-text="loading
+                                                                            ? 'Mengembalikan...'
+                                                                            : 'Ya, Kembalikan'"
+                                                                    ></span>
+
+                                                                </button>
+
+                                                            </form>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
 
                                     @endif
 
